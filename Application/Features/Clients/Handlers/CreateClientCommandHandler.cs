@@ -1,13 +1,14 @@
 using Application.Features.Clients.Commands;
 using Application.Interfaces;
+using Domain.Abstractions;
 using Domain.Models.Entities.People;
 using MediatR;
 
 namespace Application.Features.Clients.Handlers;
 
-public class CreateClientCommandHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<CreateClientCommand, int>
+public class CreateClientCommandHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<CreateClientCommand, Result<int>>
 {
-    public async Task<int> Handle(CreateClientCommand request, CancellationToken cancellationToken)
+    public async Task<Result<int>> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
         var client = new Client
         {

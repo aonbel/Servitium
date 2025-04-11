@@ -1,3 +1,4 @@
+using Domain.Abstractions;
 using MediatR;
 
 namespace Application.Features.Clients.Commands;
@@ -9,4 +10,4 @@ public record CreateClientCommand(
     string Email, 
     string Phone, 
     DateOnly Birthday,
-    string Gender) : IRequest<int>;
+    string Gender) : IRequest<Result<int>>;

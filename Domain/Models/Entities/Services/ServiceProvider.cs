@@ -1,7 +1,7 @@
 ﻿using Domain.Models.Entities.Core;
-using Domain.Models.Entities.Services;
+using Domain.Models.Entities.People;
 
-namespace Domain.Models.Entities.People;
+namespace Domain.Models.Entities.Services;
 
 public class ServiceProvider : Entity
 {
