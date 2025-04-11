@@ -6,15 +6,15 @@ using MediatR;
 
 namespace Application.Features.Clients.Handlers;
 
-public class GetClientQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetClientQuery, Result<Client>>
+public class GetClientByIdQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetClientByIdQuery, Result<Client>>
 {
-    public async Task<Result<Client>> Handle(GetClientQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Client>> Handle(GetClientByIdQuery request, CancellationToken cancellationToken)
     {
         var client = await applicationDbContext.Clients.FindAsync( [ request.Id ], cancellationToken);
 
         if (client is null)
         {
-            return new Error("404", "Client not found");
+            return new Error("ClientNotFound", "Client with given id was not found");
         }
         
         return client;
