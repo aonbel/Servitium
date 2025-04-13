@@ -10,6 +10,5 @@ public class Service : Entity
     public required ICollection<ServiceResult> Result { get; set; }
     public required float PricePerHourForMaterials { get; set; }
     public required float PricePerHourForEquipment { get; set; }
-    public required float[] Prices { get; set; }
-    public required (TimeOnly begin, TimeOnly end)[] Schedule { get; set; } 
+    public required TimeSpan Duration { get; set; }
 }

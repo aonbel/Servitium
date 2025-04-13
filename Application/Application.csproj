@@ -25,18 +25,12 @@
       <Folder Include="Features\ServiceProviderManagers\Commands\" />
       <Folder Include="Features\ServiceProviderManagers\Handlers\" />
       <Folder Include="Features\ServiceProviderManagers\Queries\" />
-      <Folder Include="Features\ServiceProviders\Commands\" />
-      <Folder Include="Features\ServiceProviders\Handlers\" />
-      <Folder Include="Features\ServiceProviders\Queries\" />
       <Folder Include="Features\ServiceResults\Commands\" />
       <Folder Include="Features\ServiceResults\Handlers\" />
       <Folder Include="Features\ServiceResults\Queries\" />
       <Folder Include="Features\Services\Commands\" />
       <Folder Include="Features\Services\Handlers\" />
       <Folder Include="Features\Services\Queries\" />
-      <Folder Include="Features\Specialists\Commands\" />
-      <Folder Include="Features\Specialists\Handlers\" />
-      <Folder Include="Features\Specialists\Queries\" />
     </ItemGroup>
 
 </Project>

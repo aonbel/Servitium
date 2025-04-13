@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.Features.Users.Queries;
 
-public record GetUserQueryById(
+public sealed record GetUserQueryById(
     int Id) : IRequest<Result<User>>;

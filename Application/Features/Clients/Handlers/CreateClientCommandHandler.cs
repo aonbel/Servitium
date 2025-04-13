@@ -7,14 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Clients.Handlers;
 
-public class CreateClientCommandHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<CreateClientCommand, Result<int>>
+public sealed class CreateClientCommandHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<CreateClientCommand, Result<int>>
 {
     public async Task<Result<int>> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
-        var userExists = await applicationDbContext.Users.AnyAsync(u => u.Id == request.UserId, cancellationToken);
+        var userExists = await applicationDbContext.Users.AnyAsync(
+            u => u.Id == request.UserId, 
+            cancellationToken);
+        
         if (!userExists)
         {
-            return new Error("UserNotFound", "User with given id was not found");
+            return new Error("UserNotFound", $"User with given id {request.UserId} does not exist");
         }
         
         var client = new Client

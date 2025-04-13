@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Handlers;
 
-public class CreateUserCommandHandler(IApplicationDbContext applicationDbContext)
+public sealed class CreateUserCommandHandler(IApplicationDbContext applicationDbContext)
     : IRequestHandler<CreateUserCommand, Result<int>>
 {
     public async Task<Result<int>> Handle(CreateUserCommand request, CancellationToken cancellationToken)

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Features.Users.Commands;
 
-public record CreateUserCommand(
+public sealed record CreateUserCommand(
     string Password, 
     string Username, 
     string Role) : IRequest<Result<int>>;

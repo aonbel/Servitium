@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Features.Users.Handlers;
 
-public class GetUserQueryByIdHandler(IApplicationDbContext applicationDbContext) : 
+public sealed class GetUserQueryByIdHandler(IApplicationDbContext applicationDbContext) : 
     IRequestHandler<GetUserQueryById, Result<User>>
 {
     public async Task<Result<User>> Handle(GetUserQueryById request, CancellationToken cancellationToken)
@@ -15,7 +15,7 @@ public class GetUserQueryByIdHandler(IApplicationDbContext applicationDbContext)
 
         if (user is null)
         {
-            return new Error("UserNotFound", "User with given id was not found");
+            return new Error("UserNotFound", $"User with given id {request.Id} does not exist");
         }
 
         return user;

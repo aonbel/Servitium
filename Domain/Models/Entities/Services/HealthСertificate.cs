@@ -2,5 +2,5 @@
 
 public class HealthCertificate : ServiceResult
 {
-    public string Description { get; set; }
+    public required string Description { get; set; }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Handlers;
 
-public class GetUserByUsernameQueryHandler(IApplicationDbContext applicationDbContext) :
+public sealed class GetUserByUsernameQueryHandler(IApplicationDbContext applicationDbContext) :
     IRequestHandler<GetUserByUsernameQuery, Result<User>>
 {
     public async Task<Result<User>> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken)
@@ -18,7 +18,7 @@ public class GetUserByUsernameQueryHandler(IApplicationDbContext applicationDbCo
 
         if (user is null)
         {
-            return new Error("UserNotFound", "User with given username was not found");
+            return new Error("UserNotFound", "User with given username does not exist");
         }
 
         return user;

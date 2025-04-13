@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Features.Clients.Handlers;
 
-public class GetClientByIdQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetClientByIdQuery, Result<Client>>
+public sealed class GetClientByIdQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetClientByIdQuery, Result<Client>>
 {
     public async Task<Result<Client>> Handle(GetClientByIdQuery request, CancellationToken cancellationToken)
     {
@@ -14,7 +14,7 @@ public class GetClientByIdQueryHandler(IApplicationDbContext applicationDbContex
 
         if (client is null)
         {
-            return new Error("ClientNotFound", "Client with given id was not found");
+            return new Error("ClientNotFound", "Client with given id does not exist");
         }
         
         return client;

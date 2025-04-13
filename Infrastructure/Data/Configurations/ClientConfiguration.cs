@@ -8,8 +8,6 @@ public class ClientConfiguration : IEntityTypeConfiguration<Client>
 {
     public void Configure(EntityTypeBuilder<Client> builder)
     {
-        builder.HasKey(c => c.Id);
-
-        builder.HasMany(c => c.ServiceResults);
+        
     }
 }

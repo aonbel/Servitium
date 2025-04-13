@@ -11,6 +11,4 @@ public class Person : BaseEntity
     public required string LastName { get; set; }
     public required string Email { get; set; }
     public required string Phone { get; set; }
-
-    public ICollection<ServiceResult> ServiceResults { get; set; } = [];
 }
