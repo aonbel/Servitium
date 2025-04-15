@@ -10,7 +10,7 @@ public sealed class GetClientByIdQueryHandler(IApplicationDbContext applicationD
 {
     public async Task<Result<Client>> Handle(GetClientByIdQuery request, CancellationToken cancellationToken)
     {
-        var client = await applicationDbContext.Clients.FindAsync( [ request.Id ], cancellationToken);
+        var client = await applicationDbContext.Clients.FindAsync( [ request.ClientId ], cancellationToken);
 
         if (client is null)
         {

@@ -11,11 +11,11 @@ public sealed class GetUserQueryByIdHandler(IApplicationDbContext applicationDbC
 {
     public async Task<Result<User>> Handle(GetUserQueryById request, CancellationToken cancellationToken)
     {
-        var user = await applicationDbContext.Users.FindAsync( [ request.Id ], cancellationToken);
+        var user = await applicationDbContext.Users.FindAsync( [ request.UserId ], cancellationToken);
 
         if (user is null)
         {
-            return new Error("UserNotFound", $"User with given id {request.Id} does not exist");
+            return new Error("UserNotFound", $"User with given id {request.UserId} does not exist");
         }
 
         return user;

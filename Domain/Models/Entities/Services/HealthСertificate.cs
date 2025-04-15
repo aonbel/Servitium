@@ -2,9 +2,11 @@
 
 namespace Domain.Models.Entities.Services;
 
-public class HealthCertificate : Entity
+public class HealthCertificate : HealthCertificateTemplate
 {
-    public required DateOnlySegment ActivePeriod { get; set; }   
+    public required DateOnly ReceivingTime { get; set; }   
     
     public required string Description { get; set; }
+    
+    public required int TemplateId { get; set; }
 }

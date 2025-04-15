@@ -11,6 +11,11 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<User> Users { get; }
     public DbSet<Specialist> Specialists { get; }
     public DbSet<ServiceProvider> ServiceProviders { get; }
+    public DbSet<ServiceProviderManager> ServiceProviderManagers { get; }
+    public DbSet<HealthCertificateTemplate> HealthСertificateTemplates { get; }
+    public DbSet<HealthCertificate> HealthСertificates { get; }
+    public DbSet<Service> Services { get; }
+    public DbSet<Appointment> Appointments { get; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
