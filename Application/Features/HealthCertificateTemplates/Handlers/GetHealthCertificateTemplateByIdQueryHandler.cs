@@ -1,7 +1,8 @@
 using Application.Features.HealthCertificateTemplates.Queries;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Features.HealthCertificateTemplates.Handlers;
@@ -13,7 +14,7 @@ public sealed class GetHealthCertificateTemplateByIdQueryHandler(IApplicationDbC
         CancellationToken cancellationToken)
     {
         var healthCertificateTemplate =
-            await applicationDbContext.HealthСertificateTemplates.FindAsync([request.HealthCertificateTemplateId],
+            await applicationDbContext.HealthCertificateTemplates.FindAsync([request.HealthCertificateTemplateId],
                 cancellationToken);
 
         if (healthCertificateTemplate is null)

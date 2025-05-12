@@ -1,7 +1,8 @@
 using Application.Features.Services.Commands;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Features.Services.Handlers;
@@ -11,35 +12,28 @@ public sealed class CreateServiceCommandHandler(IApplicationDbContext applicatio
 {
     public async Task<Result<int>> Handle(CreateServiceCommand request, CancellationToken cancellationToken)
     {
-        List<HealthCertificateTemplate> requirements = [];
-        List<HealthCertificateTemplate> results = [];
-
         foreach (var requirementId in request.RequirementIds)
         {
             var requirement =
-                await applicationDbContext.HealthСertificateTemplates.FindAsync([requirementId], cancellationToken);
+                await applicationDbContext.HealthCertificateTemplates.FindAsync([requirementId], cancellationToken);
 
             if (requirement is null)
             {
                 return new Error("HealthCertificateTemplateNotFound",
                     $"Health certificate template with given id {requirementId} does not exist");
             }
-            
-            requirements.Add(requirement);
         }
         
         foreach (var resultId in request.ResultIds)
         {
             var result =
-                await applicationDbContext.HealthСertificateTemplates.FindAsync([resultId], cancellationToken);
+                await applicationDbContext.HealthCertificateTemplates.FindAsync([resultId], cancellationToken);
 
             if (result is null)
             {
                 return new Error("HealthCertificateTemplateNotFound",
                     $"Health certificate template with given id {resultId} does not exist");
             }
-            
-            results.Add(result);
         }
 
         var service = new Service
@@ -47,8 +41,8 @@ public sealed class CreateServiceCommandHandler(IApplicationDbContext applicatio
             Name = request.Name,
             ShortName = request.ShortName,
             Description = request.Description,
-            Requirements = requirements,
-            Result = results,
+            RequiredHealthCertificateTemplateIds = request.RequirementIds,
+            ResultHealthCertificateTemplateIds = request.ResultIds,
             PricePerHourForMaterials = request.PricePerHourForMaterials,
             PricePerHourForEquipment = request.PricePerHourForEquipment,
             Duration = request.Duration

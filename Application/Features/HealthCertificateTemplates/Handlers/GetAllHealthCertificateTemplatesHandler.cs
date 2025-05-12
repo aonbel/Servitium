@@ -1,7 +1,8 @@
 using Application.Features.HealthCertificateTemplates.Queries;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ public sealed class GetAllHealthCertificateTemplatesHandler(IApplicationDbContex
         CancellationToken cancellationToken)
     {
         var healthCertificateTemplates =
-            await applicationDbContext.HealthСertificateTemplates.ToListAsync(cancellationToken);
+            await applicationDbContext.HealthCertificateTemplates.ToListAsync(cancellationToken);
 
         return healthCertificateTemplates;
     }

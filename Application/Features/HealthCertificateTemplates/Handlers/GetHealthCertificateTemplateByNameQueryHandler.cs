@@ -1,7 +1,8 @@
 using Application.Features.HealthCertificateTemplates.Queries;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,7 @@ public sealed class GetHealthCertificateTemplateByNameQueryHandler(IApplicationD
     public async Task<Result<HealthCertificateTemplate>> Handle(GetHealthCertificateTemplateByNameQuery request,
         CancellationToken cancellationToken)
     {
-        var healthCertificateTemplate = await applicationDbContext.HealthСertificateTemplates
+        var healthCertificateTemplate = await applicationDbContext.HealthCertificateTemplates
                 .Where(template => template.Name == request.HealthCertificateName)
                 .FirstOrDefaultAsync(cancellationToken);
 

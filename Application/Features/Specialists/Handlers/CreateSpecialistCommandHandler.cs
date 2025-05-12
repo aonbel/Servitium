@@ -1,7 +1,8 @@
 using Application.Features.Specialists.Commands;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.People;
+using Domain.Abstractions.Result;
+using Domain.Entities.People;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

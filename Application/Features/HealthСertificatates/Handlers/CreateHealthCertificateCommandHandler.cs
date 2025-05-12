@@ -1,7 +1,8 @@
 using Application.Features.HealthСertificatates.Commands;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Features.HealthСertificatates.Handlers;
@@ -10,7 +11,7 @@ public sealed class CreateHealthCertificateCommandHandler(IApplicationDbContext 
 {
     public async Task<Result<int>> Handle(CreateHealthCertificateCommand request, CancellationToken cancellationToken)
     {
-        var template = await applicationDbContext.HealthСertificateTemplates.FindAsync(
+        var template = await applicationDbContext.HealthCertificateTemplates.FindAsync(
             [ request.TemplateId ], 
             cancellationToken);
 
@@ -35,7 +36,7 @@ public sealed class CreateHealthCertificateCommandHandler(IApplicationDbContext 
             TemplateId = request.TemplateId,
         };
         
-        await applicationDbContext.HealthСertificates.AddAsync(healthCertificate, cancellationToken);
+        await applicationDbContext.HealthCertificates.AddAsync(healthCertificate, cancellationToken);
         
         client.ServiceResults.Add(healthCertificate);
         

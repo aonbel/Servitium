@@ -1,7 +1,6 @@
 using Domain.Abstractions;
-using Domain.Models.Entities.Core;
-using Domain.Models.Entities.People;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Core;
 using MediatR;
 
 namespace Application.Features.ServiceProviders.Commands;

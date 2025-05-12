@@ -1,7 +1,8 @@
 using Application.Features.Services.Queries;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

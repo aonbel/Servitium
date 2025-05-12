@@ -1,5 +1,6 @@
 using Domain.Abstractions;
-using Domain.Models.Entities.People;
+using Domain.Abstractions.Result;
+using Domain.Entities.People;
 using MediatR;
 
 namespace Application.Features.Specialists.Queries;

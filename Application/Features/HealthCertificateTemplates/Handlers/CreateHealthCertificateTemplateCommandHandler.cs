@@ -1,7 +1,8 @@
 using Application.Features.HealthCertificateTemplates.Commands;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ public sealed class CreateHealthCertificateTemplateCommandHandler(IApplicationDb
         CancellationToken cancellationToken)
     {
         var healthCertificateTemplateWithGivenName =
-            await applicationDbContext.HealthСertificateTemplates.Where(template => template.Name == request.Name)
+            await applicationDbContext.HealthCertificateTemplates.Where(template => template.Name == request.Name)
                 .FirstOrDefaultAsync(cancellationToken);
 
         if (healthCertificateTemplateWithGivenName is not null)
@@ -29,7 +30,7 @@ public sealed class CreateHealthCertificateTemplateCommandHandler(IApplicationDb
             ActivePeriod = request.ActivePeriod
         };
         
-        await applicationDbContext.HealthСertificateTemplates.AddAsync(healthCertificateTemplate, cancellationToken);
+        await applicationDbContext.HealthCertificateTemplates.AddAsync(healthCertificateTemplate, cancellationToken);
         
         return await applicationDbContext.SaveChangesAsync(cancellationToken);
     }

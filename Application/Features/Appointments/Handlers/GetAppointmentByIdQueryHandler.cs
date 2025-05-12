@@ -1,7 +1,8 @@
 using Application.Features.Appointments.Queries;
-using Application.Interfaces;
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
+using Domain.Entities.Services;
+using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Features.Appointments.Handlers;

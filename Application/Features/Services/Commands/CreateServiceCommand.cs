@@ -1,5 +1,5 @@
 using Domain.Abstractions;
-using Domain.Models.Entities.Services;
+using Domain.Abstractions.Result;
 using MediatR;
 
 namespace Application.Features.Services.Commands;

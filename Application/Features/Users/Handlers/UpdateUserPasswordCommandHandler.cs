@@ -1,6 +1,8 @@
 using Application.Features.Users.Commands;
-using Application.Interfaces;
 using Domain.Abstractions;
+using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,6 @@ public sealed class UpdateUserPasswordCommandHandler(IApplicationDbContext appli
                 propertyCalls => propertyCalls.SetProperty(user => user.Password, request.Password),
                 cancellationToken);
 
-        return rowsUpdates == 0 ? new Error("UserNotFound", "User with given id does not exist") : Result.Success();
+        return rowsUpdates == 0 ? UserErrors.NotFoundById(request.Id) : Result.Success();
     }
 }

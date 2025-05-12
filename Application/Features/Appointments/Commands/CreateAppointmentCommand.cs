@@ -1,5 +1,6 @@
 using Domain.Abstractions;
-using Domain.Models.Entities.Core;
+using Domain.Abstractions.Result;
+using Domain.Entities.Core;
 using MediatR;
 
 namespace Application.Features.Appointments.Commands;

@@ -1,0 +1,31 @@
+@using Servitium.Pages
+<ul class="navbar-nav">
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-page="@Routes.Index">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-page="@Routes.Privacy">Privacy</a>
+    </li>
+    @if (User.IsInRole("Admin"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-page="@Routes.UsersIndex">Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-page="@Routes.AppointmentsAll">Appointments</a>
+        </li>
+    }
+    else if (User.IsInRole("Manager"))
+    {
+        
+    }
+    else if (User.IsInRole("Specialist"))
+    {
+    }
+    else if (User.IsInRole("Client"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-page="@Routes.AppointmentsIndex">Appointments</a>
+        </li>
+    }
+</ul>
