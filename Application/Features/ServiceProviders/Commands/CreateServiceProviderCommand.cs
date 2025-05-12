@@ -11,6 +11,6 @@ public sealed record CreateServiceProviderCommand(
     string Address,
     Coordinates Coordinates,
     TimeOnlySegment WorkTime,
-    DayOfWeek[] WorkDays,
-    string[] Contacts
+    ICollection<DayOfWeek> WorkDays,
+    ICollection<string> Contacts
 ) : IRequest<Result<int>>;

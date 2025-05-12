@@ -16,4 +16,5 @@ internal static class Routes
     public const string ServiceProvidersIndex = "/ServiceProviders/Index";
     public const string ServiceProvidersAdminIndex = "/ServiceProviders/Admin/Index";
     public const string ServiceProviderDetails = "/ServiceProviders/Details";
+    public const string ServiceProvidersCreate = "/ServiceProviders/Create";
 }

@@ -12,4 +12,11 @@ public static class Lengths
     public const int MaxLastName = 100;
     public const int MinPassword = 6;
     public const int MaxPassword = 100;
+    
+    public const int MinServiceProviderName = 3;
+    public const int MaxServiceProviderName = 50;
+    public const int MinServiceProviderShortName = 3;
+    public const int MaxServiceProviderShortName = 25;
+    public const int MinServiceProviderAddress = 3;
+    public const int MaxServiceProviderAddress = 75;
 }

@@ -2,8 +2,8 @@ namespace Domain.Entities.Core;
 
 public sealed class TimeOnlySegment
 {
-    public required TimeOnly Begin { get; init; }
-    public required TimeOnly End { get; init; }
+    public TimeOnly Begin { get; init; }
+    public TimeOnly End { get; init; }
 
     public TimeOnlySegment(TimeOnly begin, TimeOnly end)
     {
@@ -24,5 +24,10 @@ public sealed class TimeOnlySegment
     public bool Contains(TimeOnlySegment other)
     {
         return Begin <= other.Begin && other.End <= End;
+    }
+
+    public override string ToString()
+    {
+        return Begin + "-" + End;
     }
 }

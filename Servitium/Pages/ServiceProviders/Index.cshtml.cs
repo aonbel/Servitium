@@ -12,6 +12,11 @@ public class Index(ISender sender) : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
+        if (User.IsInRole("Admin"))
+        {
+            return LocalRedirect(Routes.ServiceProvidersAdminIndex);
+        }
+        
         var query = new GetAllServiceProvidersQuery();
         
         var response = await sender.Send(query);
