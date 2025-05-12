@@ -1,5 +1,6 @@
 @page
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Servitium.Pages
 @model Servitium.Pages.SignInModel
 @{
     ViewData["Title"] = "Sign in";
@@ -46,7 +47,7 @@
     <script>
         
         function redirectToSignUp() {
-            window.location.href = '@Url.Page("/SignUp/", new { returnUrl = Model.ReturnUrl })';
+            window.location.href = '@Url.Page(Routes.SignUp, new { returnUrl = Model.ReturnUrl })';
         }
         
         document.addEventListener('DOMContentLoaded', function() {

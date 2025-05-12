@@ -19,7 +19,7 @@ public class Index(ISender sender) : PageModel
         if (response.IsError)
         {
             ModelState.AddModelError(response.Error.Code, response.Error.Message);
-            return LocalRedirect("/Index");
+            return LocalRedirect(Routes.Index);
         }
 
         ServicesProviders = response.Value;

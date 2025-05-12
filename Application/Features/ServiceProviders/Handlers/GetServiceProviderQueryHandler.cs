@@ -8,9 +8,9 @@ using MediatR;
 namespace Application.Features.ServiceProviders.Handlers;
 
 public sealed class GetServiceProviderQueryHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetServiceProviderQuery, Result<ServiceProvider>>
+    : IRequestHandler<GetServiceProviderByIdQuery, Result<ServiceProvider>>
 {
-    public async Task<Result<ServiceProvider>> Handle(GetServiceProviderQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ServiceProvider>> Handle(GetServiceProviderByIdQuery request, CancellationToken cancellationToken)
     {
         var serviceProvider = await applicationDbContext.ServiceProviders.FindAsync(
             [request.Id], 

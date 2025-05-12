@@ -1,4 +1,5 @@
 @page
+@using Servitium.Pages
 @model Servitium.Pages.SignUpModel
 @{
     ViewData["Title"] = "Sign up";
@@ -86,7 +87,7 @@
     <partial name="_ValidationScriptsPartial"/>
     <script>
         function redirectToSignIn() {
-            window.location.href = '@Url.Page("./SignIn", new { returnUrl = Model.ReturnUrl })';
+            window.location.href = '@Url.Page(Routes.SignIn, new { returnUrl = Model.ReturnUrl })';
         }
 
         document.addEventListener('DOMContentLoaded', function() {

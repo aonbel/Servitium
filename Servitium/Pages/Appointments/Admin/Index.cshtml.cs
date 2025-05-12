@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Servitium.Pages.Appointments;
+namespace Servitium.Pages.Appointments.Admin;
 
 [Authorize(Roles = "Admin")]
 public class All(ISender sender) : PageModel
@@ -21,7 +21,7 @@ public class All(ISender sender) : PageModel
         if (result.IsError)
         {
             ModelState.AddModelError(result.Error.Code, result.Error.Message);
-            return LocalRedirect("/Index");
+            return LocalRedirect(Routes.Index);
         }
 
         Appointments = result.Value;

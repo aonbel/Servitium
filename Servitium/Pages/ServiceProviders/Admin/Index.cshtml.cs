@@ -1,24 +1,19 @@
-using Application.Features.Appointments.Queries;
-using Domain.Entities.Services;
-using Infrastructure.Authentification;
+using Application.Features.ServiceProviders.Queries;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ServiceProvider = Domain.Entities.Services.ServiceProvider;
 
-namespace Servitium.Pages.Appointments;
+namespace Servitium.Pages.ServiceProviders.Admin;
 
-[Authorize(Roles = "Client")]
 public class Index(ISender sender) : PageModel
 {
-    public ICollection<Appointment> Appointments { get; set; } = [];
-    
+    public ICollection<ServiceProvider> ServicesProviders { get; set; } = [];
+
     public async Task<IActionResult> OnGetAsync()
     {
-        var userId = User.GetUserId();
+        var query = new GetAllServiceProvidersQuery();
         
-        var query = new GetAllAppointmentsByClientIdQuery(userId);
-
         var response = await sender.Send(query);
 
         if (response.IsError)
@@ -27,8 +22,8 @@ public class Index(ISender sender) : PageModel
             return LocalRedirect(Routes.Index);
         }
 
-        Appointments = response.Value;
-
+        ServicesProviders = response.Value;
+        
         return Page();
     }
 }

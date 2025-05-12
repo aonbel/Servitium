@@ -4,6 +4,9 @@
         <a class="nav-link text-dark" asp-page="@Routes.Index">Home</a>
     </li>
     <li class="nav-item">
+        <a class="nav-link text-dark" asp-page="@Routes.ServiceProvidersIndex">Service providers</a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link text-dark" asp-page="@Routes.Privacy">Privacy</a>
     </li>
     @if (User.IsInRole("Admin"))
@@ -12,7 +15,7 @@
             <a class="nav-link text-dark" asp-page="@Routes.UsersIndex">Users</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="@Routes.AppointmentsAll">Appointments</a>
+            <a class="nav-link text-dark" asp-page="@Routes.AppointmentsAdminIndex">Appointments</a>
         </li>
     }
     else if (User.IsInRole("Manager"))

@@ -1,0 +1,29 @@
+@page
+@using Servitium.Pages
+@model Servitium.Pages.ServiceProviders.Details
+
+<form method="get">
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.ShortName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.ShortName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.FullName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.FullName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.Address" class="form-control" readonly/>
+        <label asp-for="@Model.Data.Address" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.Contacts" class="form-control" readonly/>
+        <label asp-for="@Model.Data.Contacts" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.Coordinates" class="form-control" readonly/>
+        <label asp-for="@Model.Data.Coordinates" class="control-label"></label>
+    </div>
+    <div class="form-group mt-3">
+        <a asp-page="@Routes.ServiceProvidersIndex" class="btn btn-secondary">Back to list</a>
+    </div>
+</form>
