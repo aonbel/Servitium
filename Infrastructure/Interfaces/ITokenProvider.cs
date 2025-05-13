@@ -1,10 +1,10 @@
-using Domain.Entities.People;
+using Microsoft.AspNetCore.Identity;
 
-namespace Domain.Interfaces;
+namespace Infrastructure.Interfaces;
 
 public interface ITokenProvider
 {
-    public string GenerateAccessToken(User user);
+    public Task<string> GenerateAccessToken(IdentityUser user);
     
     public bool ValidateAccessToken(string accessToken);
     

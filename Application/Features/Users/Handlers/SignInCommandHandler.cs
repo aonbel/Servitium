@@ -3,9 +3,10 @@ using Application.Features.Users.Responces;
 using Domain.Abstractions.RefreshToken;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using Infrastructure.Options.Authentication;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -13,14 +14,15 @@ namespace Application.Features.Users.Handlers;
 
 public sealed class SignInCommandHandler(
     IApplicationDbContext applicationDbContext,
+    UserManager<IdentityUser> userManager,
     ITokenProvider tokenProvider,
     IOptions<AuthenticationOptions> authenticationOptions)
     : IRequestHandler<SignInCommand, Result<SignInCommandResponce>>
 {
     public async Task<Result<SignInCommandResponce>> Handle(SignInCommand request, CancellationToken cancellationToken)
     {
-        var user = await applicationDbContext.Users.FirstOrDefaultAsync(
-            user => user.Username == request.Username,
+        var user = await userManager.Users.SingleOrDefaultAsync(
+            user => user.UserName == request.Username,
             cancellationToken);
 
         if (user is null)
@@ -28,7 +30,7 @@ public sealed class SignInCommandHandler(
             return UserErrors.NotFoundByUsername(request.Username);
         }
 
-        if (user.Password != request.Password)
+        if (user.PasswordHash != request.Password)
         {
             return UserErrors.WrongPassword();
         }
@@ -43,12 +45,12 @@ public sealed class SignInCommandHandler(
             applicationDbContext.RefreshTokens.Remove(oldRefreshToken);
         }
 
-        var accessToken = tokenProvider.GenerateAccessToken(user);
+        var accessToken = await tokenProvider.GenerateAccessToken(user);
         var refreshToken = new RefreshToken
         {
             Token = tokenProvider.GenerateRefreshToken(),
             ExpiresOn = DateTime.UtcNow.AddDays(authenticationOptions.Value.RefreshTokenExpirationInDays),
-            UserId = user.Id!.Value,
+            UserId = user.Id,
         };
 
         await applicationDbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);

@@ -1,21 +1,17 @@
 using Application.Features.Users.Queries;
-using Domain.Abstractions;
 using Domain.Abstractions.Result;
-using Domain.Entities.People;
-using Domain.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Handlers;
 
-public sealed class GetUserByUsernameQueryHandler(IApplicationDbContext applicationDbContext) :
-    IRequestHandler<GetUserByUsernameQuery, Result<User>>
+public sealed class GetUserByUsernameQueryHandler(UserManager<IdentityUser> userManager) :
+    IRequestHandler<GetUserByUsernameQuery, Result<IdentityUser>>
 {
-    public async Task<Result<User>> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IdentityUser>> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken)
     {
-        var user = await applicationDbContext.Users.FirstOrDefaultAsync(
-            user => user.Username == request.Username,
-            cancellationToken);
+        var user = await userManager.Users.SingleOrDefaultAsync(u => u.UserName == request.Username, cancellationToken);
 
         if (user is null)
         {

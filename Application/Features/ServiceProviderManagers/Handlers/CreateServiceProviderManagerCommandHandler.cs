@@ -1,13 +1,18 @@
 using Application.Features.ServiceProviderManagers.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.ServiceProviderManagers.Handlers;
 
-public sealed class CreateServiceProviderManagerCommandHandler(IApplicationDbContext applicationDbContext)
+public sealed class CreateServiceProviderManagerCommandHandler(
+    IApplicationDbContext applicationDbContext,
+    UserManager<IdentityUser> userManager)
     : IRequestHandler<CreateServiceProviderManagerCommand, Result<int>>
 {
     public async Task<Result<int>> Handle(CreateServiceProviderManagerCommand request,
@@ -21,12 +26,12 @@ public sealed class CreateServiceProviderManagerCommandHandler(IApplicationDbCon
             return new Error("ServiceProviderNotFound",
                 $"Service provider with given id {request.ServiceProviderId} does not exist");
         }
-        
-        var user = await applicationDbContext.Users.FindAsync([request.UserId], cancellationToken);
+
+        var user = await userManager.Users.SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return new Error("UserNotFound", $"User with given id {request.UserId} does not exist");
+            return UserErrors.NotFoundById(request.UserId);
         }
 
         var serviceProviderManager = new ServiceProviderManager
@@ -39,9 +44,9 @@ public sealed class CreateServiceProviderManagerCommandHandler(IApplicationDbCon
             Phone = request.Phone,
             ServiceProvider = serviceProvider
         };
-        
+
         await applicationDbContext.ServiceProviderManagers.AddAsync(serviceProviderManager, cancellationToken);
-        
+
         return await applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 }

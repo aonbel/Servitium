@@ -14,8 +14,8 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
     [BindProperty]
     public InputModel Input { get; set; } = new ();
 
-    public string? ReturnUrl { get; set; } = null;
-
+    public string? ReturnUrl { get; set; }
+    
     public class InputModel
     {
         [Required]

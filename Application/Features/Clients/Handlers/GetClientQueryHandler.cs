@@ -2,7 +2,7 @@ using Application.Features.Clients.Queries;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Entities.People;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using MediatR;
 
 namespace Application.Features.Clients.Handlers;

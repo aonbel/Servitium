@@ -3,13 +3,11 @@ using Domain.Entities.People;
 using Domain.Entities.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Interfaces;
+namespace Infrastructure.Interfaces;
 
 public interface IApplicationDbContext
 {
     DbSet<Client> Clients { get; }
-    
-    DbSet<User> Users { get; }
     
     DbSet<Specialist> Specialists { get; }
     

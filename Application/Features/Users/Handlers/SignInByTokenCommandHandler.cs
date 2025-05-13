@@ -3,9 +3,10 @@ using Application.Features.Users.Responces;
 using Domain.Abstractions.RefreshToken;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using Infrastructure.Options.Authentication;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -13,6 +14,7 @@ namespace Application.Features.Users.Handlers;
 
 public sealed class SignInByTokenCommandHandler(
     IApplicationDbContext applicationDbContext,
+    UserManager<IdentityUser> userManager,
     ITokenProvider tokenProvider,
     IOptions<AuthenticationOptions> authenticationOptions)
     : IRequestHandler<SignInByTokenCommand, Result<SignInByTokenCommandResponce>>
@@ -28,19 +30,24 @@ public sealed class SignInByTokenCommandHandler(
         {
             return RefreshTokenErrors.NotFoundByToken();
         }
-
-        var user = await applicationDbContext.Users.FirstAsync(
+        
+        var user = await userManager.Users.SingleOrDefaultAsync(
             u => u.Id == refreshToken.UserId,
             cancellationToken);
 
-        var accessToken = tokenProvider.GenerateAccessToken(user);
+        if (user is null)
+        {
+            return UserErrors.NotFoundById(refreshToken.UserId);
+        }
+
+        var accessToken = await tokenProvider.GenerateAccessToken(user);
         
         applicationDbContext.RefreshTokens.Remove(refreshToken);
 
         var newRefreshToken = new RefreshToken
         {
             Token = tokenProvider.GenerateRefreshToken(),
-            UserId = user.Id!.Value,
+            UserId = user.Id,
             ExpiresOn = DateTime.UtcNow.AddDays(authenticationOptions.Value.RefreshTokenExpirationInDays)
         };
         

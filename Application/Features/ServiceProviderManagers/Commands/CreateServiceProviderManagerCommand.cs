@@ -5,7 +5,7 @@ using MediatR;
 namespace Application.Features.ServiceProviderManagers.Commands;
 
 public sealed record CreateServiceProviderManagerCommand(
-    int UserId,
+    string UserId,
     int ServiceProviderId,
     string FirstName,
     string MiddleName,

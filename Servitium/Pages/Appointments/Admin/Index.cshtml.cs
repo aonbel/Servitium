@@ -1,5 +1,6 @@
 using Application.Features.Appointments.Queries;
 using Domain.Entities.Services;
+using Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Servitium.Pages.Appointments.Admin;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = ApplicationRoles.Admin)]
 public class All(ISender sender) : PageModel
 {
     public ICollection<Appointment> Appointments { get; set; } = [];

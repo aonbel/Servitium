@@ -12,10 +12,10 @@ public class LogOutModel(TokenHandler tokenHandler) : PageModel
 {
     public IActionResult OnGet() => Page();
 
-    public async Task<IActionResult> OnPost(string? returnUrl = null)
+    public IActionResult OnPost(string? returnUrl = null)
     {
         tokenHandler.ClearTokens();
         
-        return LocalRedirect(returnUrl ?? Url.Content("~/"));
+        return LocalRedirect(returnUrl ?? Url.Content(Routes.Index));
     }
 }

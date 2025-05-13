@@ -2,7 +2,7 @@ namespace Domain.Abstractions.Result.Errors;
 
 public static class UserErrors
 {
-    public static Error NotFoundById(int id) => 
+    public static Error NotFoundById(string id) => 
         new Error("UserNotFound", $"User with id {id} does not exist");
     
     public static Error NotFoundByUsername(string username) =>

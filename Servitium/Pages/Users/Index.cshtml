@@ -10,8 +10,7 @@
     <thead>
     <tr>
         <th>User name</th>
-        <th>Name</th>
-        <th>Email</th>
+        <th>User pass</th>
         <th>Actions</th>
     </tr>
     </thead>
@@ -19,9 +18,8 @@
     @foreach (var user in Model.Data)
     {
         <tr>
-            <td>@user.Username</td>
-            <td>@user.Roles.FirstOrDefault()</td>
-            <td>@user.Password</td>
+            <td>@user.UserName</td>
+            <td>@user.PasswordHash</td>
         </tr>
     }
     </tbody>

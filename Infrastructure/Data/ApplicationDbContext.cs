@@ -1,16 +1,18 @@
 using Domain.Abstractions.RefreshToken;
 using Domain.Entities.People;
 using Domain.Entities.Services;
-using Domain.Interfaces;
+using Infrastructure.Authorization;
+using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
 public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : DbContext(options), IApplicationDbContext
+    : IdentityDbContext<IdentityUser, IdentityRole, string>(options), IApplicationDbContext
 {
     public DbSet<Client> Clients { get; set; }
-    public DbSet<User> Users { get; set; }
     public DbSet<Specialist> Specialists { get; set; }
     public DbSet<ServiceProvider> ServiceProviders { get; set; }
     public DbSet<ServiceProviderManager> ServiceProviderManagers { get; set; }
@@ -23,6 +25,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 

@@ -1,24 +1,27 @@
 using Application.Features.Clients.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Clients.Handlers;
 
-public sealed class CreateClientCommandHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<CreateClientCommand, Result<int>>
+public sealed class CreateClientCommandHandler(IApplicationDbContext applicationDbContext,
+    UserManager<IdentityUser> userManager) : IRequestHandler<CreateClientCommand, Result<int>>
 {
     public async Task<Result<int>> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
-        var userExists = await applicationDbContext.Users.AnyAsync(
+        var userExists = await userManager.Users.AnyAsync(
             u => u.Id == request.UserId, 
             cancellationToken);
         
         if (!userExists)
         {
-            return new Error("UserNotFound", $"User with given id {request.UserId} does not exist");
+            return UserErrors.NotFoundById(request.UserId);
         }
         
         var client = new Client

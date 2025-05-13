@@ -1,6 +1,6 @@
 @using Servitium.Pages
 <ul class="navbar-nav">
-    @if (User.Identity.IsAuthenticated)
+    @if (User.Identity!.IsAuthenticated)
     {
         <li class="nav-item">
             <a class="nav-link text-dark" asp-page="/Profile/Manage/Index" title="Manage">Hello @User.Identity?.Name</a>

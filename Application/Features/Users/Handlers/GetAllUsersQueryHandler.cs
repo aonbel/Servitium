@@ -1,19 +1,17 @@
 using Application.Features.Users.Queries;
-using Domain.Abstractions;
 using Domain.Abstractions.Result;
-using Domain.Entities.People;
-using Domain.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Handlers;
 
-public class GetAllUsersQueryHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetAllUsersQuery, Result<ICollection<User>>>
+public class GetAllUsersQueryHandler(UserManager<IdentityUser> userManager)
+    : IRequestHandler<GetAllUsersQuery, Result<ICollection<IdentityUser>>>
 {
-    public async Task<Result<ICollection<User>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ICollection<IdentityUser>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
-        var users = await applicationDbContext.Users.ToListAsync(cancellationToken);
+        var users = await userManager.Users.ToListAsync(cancellationToken);
         
         return users;
     }

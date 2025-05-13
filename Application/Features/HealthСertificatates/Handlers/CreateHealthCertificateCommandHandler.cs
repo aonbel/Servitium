@@ -2,7 +2,7 @@ using Application.Features.HealthСertificatates.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Entities.Services;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using MediatR;
 
 namespace Application.Features.HealthСertificatates.Handlers;

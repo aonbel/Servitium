@@ -5,7 +5,7 @@ using MediatR;
 namespace Application.Features.Clients.Commands;
 
 public sealed record CreateClientCommand(
-    int UserId,
+    string UserId,
     string FirstName,
     string MiddleName,
     string LastName,

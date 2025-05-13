@@ -6,7 +6,7 @@ using MediatR;
 namespace Application.Features.Specialists.Commands;
 
 public sealed record CreateSpecialistCommand(
-    int UserId,
+    string UserId,
     int ServiceProviderId,
     string FirstName,
     string MiddleName,

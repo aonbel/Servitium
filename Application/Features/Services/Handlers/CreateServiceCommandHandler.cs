@@ -2,7 +2,7 @@ using Application.Features.Services.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Entities.Services;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using MediatR;
 
 namespace Application.Features.Services.Handlers;
