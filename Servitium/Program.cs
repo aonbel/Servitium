@@ -13,31 +13,39 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 builder.Services
-    .AddAuthenticationLogic(builder.Configuration)
     .AddInfrastructure(builder.Configuration)
+    .AddAuthenticationLogic(builder.Configuration)
     .AddApplication()
     .AddPresentation()
     .AddRazorPages();
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
+app.UseMiddleware<RequestContextLoggingMiddleware>();
+
+app.UseRouting();
+
 app.Use(async (context, next) =>
 {
+    Console.WriteLine($"{context.Request.Path}");
     var token = context.Request.Cookies["AccessToken"];
     if (!string.IsNullOrEmpty(token))
     {
+        Console.WriteLine($"AccessToken from cookie: {token}");
         context.Request.Headers.Append("Authorization", $"Bearer {token}");
     }
-
+    else
+    {
+        Console.WriteLine("No AccessToken cookie found");
+    }
     await next();
 });
 
-//app.UseHttpsRedirection();
-app.UseRouting();
-
-app.UseStaticFiles();
-
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.Use(async (context, next) =>
 {
@@ -69,13 +77,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.UseMiddleware<RequestContextLoggingMiddleware>();
-
-app.UseSerilogRequestLogging();
-
-app.UseAuthorization();
-
-app.UseAuthentication();
+app.UseStaticFiles();
 
 app.MapRazorPages();
 

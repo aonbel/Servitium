@@ -7,7 +7,6 @@ using Infrastructure.Options.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Authentification;
@@ -29,7 +28,7 @@ public sealed class TokenProvider(
             new Claim(ClaimTypes.Name, user.UserName!)
         ]);
         
-        var scope = scopeFactory.CreateScope();
+        using var scope = scopeFactory.CreateScope();
         
         var userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>()!; 
         
@@ -46,17 +45,17 @@ public sealed class TokenProvider(
             Audience = authOptions.Value.Audience,
         };
         
-        var handler = new JsonWebTokenHandler();
+        var handler = new JwtSecurityTokenHandler();
         
         var token = handler.CreateToken(tokenDescriptor);
 
-        return token;
+        return handler.WriteToken(token);
     }
 
     public bool ValidateAccessToken(string accessToken)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(authOptions.Value.Secret);
+        var key = Encoding.UTF8.GetBytes(authOptions.Value.Secret);
 
         try
         {

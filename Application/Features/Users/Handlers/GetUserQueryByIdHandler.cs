@@ -1,5 +1,6 @@
 using Application.Features.Users.Queries;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ public sealed class GetUserQueryByIdHandler(UserManager<IdentityUser> userManage
 
         if (user is null)
         {
-            return new Error("UserNotFound", $"User with given id {request.Id} does not exist");
+            return UserErrors.NotFoundById(request.Id);
         }
 
         return user;

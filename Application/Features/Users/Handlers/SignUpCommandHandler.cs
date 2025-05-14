@@ -16,6 +16,7 @@ public sealed class SignUpCommandHandler(
     UserManager<IdentityUser> userManager, 
     IApplicationDbContext applicationDbContext,
     ITokenProvider tokenProvider,
+    RoleManager<IdentityRole> roleManager,
     IOptions<AuthenticationOptions> authenticationOptions)
     : IRequestHandler<SignUpCommand, Result<SignUpCommandResponce>>
 {
@@ -32,7 +33,7 @@ public sealed class SignUpCommandHandler(
         {
             return UserErrors.RolesNumberShouldBeAtLeastOne();
         }
-
+        
         var user = new IdentityUser
         {
             UserName = request.Username,
@@ -40,6 +41,17 @@ public sealed class SignUpCommandHandler(
         };
         
         await userManager.CreateAsync(user);
+
+        foreach (var role in request.Roles)
+        {
+            var roleExist = await roleManager.RoleExistsAsync(role);
+            if (!roleExist)
+            {
+                return RoleErrors.RoleNotFoundByName(role);
+            }
+            
+            await userManager.AddToRoleAsync(user, role);
+        }
         
         var accessToken = await tokenProvider.GenerateAccessToken(user);
         var refreshToken = new RefreshToken

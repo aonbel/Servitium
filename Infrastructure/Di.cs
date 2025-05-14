@@ -28,6 +28,7 @@ public static class Di
             .AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
             {
@@ -37,10 +38,8 @@ public static class Di
                 {
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]!)),
                     ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    ClockSkew = TimeSpan.Zero,
+                    ValidAudience = configuration["Jwt:Audience"]
                 };
-
                 options.Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = context =>
@@ -54,7 +53,7 @@ public static class Di
 
         services.AddHttpContextAccessor();
         services.AddSingleton<ITokenProvider, TokenProvider>();
-
+        
         return services;
     }
 
@@ -70,16 +69,16 @@ public static class Di
 
         services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<ApplicationDbContext>());
-
+        
         services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders()
             .AddRoles<IdentityRole>();
-
+        
         services.AddScoped<RoleManager<IdentityRole>>();
         services.AddScoped<UserManager<IdentityUser>>();
-
+        
         services.AddHostedService<RoleSeedService>();
+        services.AddHostedService<UserSeedService>();
 
         return services;
     }

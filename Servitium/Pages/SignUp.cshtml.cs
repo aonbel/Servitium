@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Application.Features.Clients.Commands;
 using Application.Features.Users.Commands;
+using Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -69,19 +70,19 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
     
     public void OnGet(string? returnUrl = null)
     {
-        ReturnUrl = returnUrl ?? Url.Content("~/");
+        ReturnUrl = returnUrl ?? Url.Content(Routes.Index);
     }
     
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
-        returnUrl ??= Url.Content("~/");
+        returnUrl ??= Url.Content(Routes.Index);
         
         if (!ModelState.IsValid) return Page();
         
         var signUpCommand = new SignUpCommand(
             Input.Username,
             Input.Password,
-            ["Client"]);
+            [ApplicationRoles.Client]);
             
         var signUpCommandResult = await sender.Send(signUpCommand);
         
