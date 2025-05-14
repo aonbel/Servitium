@@ -5,10 +5,5 @@ using MediatR;
 namespace Application.Features.ServiceProviderManagers.Commands;
 
 public sealed record CreateServiceProviderManagerCommand(
-    string UserId,
-    int ServiceProviderId,
-    string FirstName,
-    string MiddleName,
-    string LastName,
-    string Email,
-    string Phone) : IRequest<Result<int>>;
+    int PersonId,
+    int ServiceProviderId) : IRequest<Result<int>>;

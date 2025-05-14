@@ -7,6 +7,8 @@ namespace Infrastructure.Interfaces;
 
 public interface IApplicationDbContext
 {
+    DbSet<Person> Persons { get; set; }
+    
     DbSet<Client> Clients { get; }
     
     DbSet<Specialist> Specialists { get; }

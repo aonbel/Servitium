@@ -5,4 +5,4 @@ using MediatR;
 
 namespace Application.Features.ServiceProviderManagers.Queries;
 
-public sealed record GetServiceProviderManagerQuery(int UserId) : IRequest<Result<ServiceProviderManager>>;
+public sealed record GetServiceProviderManagerByIdQuery(int Id) : IRequest<Result<ServiceProviderManager>>;

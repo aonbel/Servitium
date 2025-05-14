@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Application.Features.Clients.Queries;
 
-public record GetClientByUserIdQuery(string UserId) : IRequest<Result<Client>>;
+public record GetClientByPersonIdQuery(int PersonId) : IRequest<Result<Client>>;

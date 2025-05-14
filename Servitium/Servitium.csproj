@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Pages\ServiceProviderManagers\Admin\" />
         <Folder Include="wwwroot\lib" />
     </ItemGroup>
 

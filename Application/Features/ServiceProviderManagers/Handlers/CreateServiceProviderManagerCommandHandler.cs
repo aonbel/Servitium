@@ -23,25 +23,19 @@ public sealed class CreateServiceProviderManagerCommandHandler(
 
         if (serviceProvider is null)
         {
-            return new Error("ServiceProviderNotFound",
-                $"Service provider with given id {request.ServiceProviderId} does not exist");
+            return ServiceProviderErrors.NotFoundById(request.ServiceProviderId);
         }
 
-        var user = await userManager.Users.SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+        var user = await applicationDbContext.Persons.SingleOrDefaultAsync(u => u.Id == request.PersonId, cancellationToken);
 
         if (user is null)
         {
-            return UserErrors.NotFoundById(request.UserId);
+            return PersonErrors.NotFoundById(request.PersonId);
         }
 
         var serviceProviderManager = new ServiceProviderManager
         {
-            UserId = request.UserId,
-            FirstName = request.FirstName,
-            MiddleName = request.MiddleName,
-            LastName = request.LastName,
-            Email = request.Email,
-            Phone = request.Phone,
+            PersonId = request.PersonId,
             ServiceProvider = serviceProvider
         };
 

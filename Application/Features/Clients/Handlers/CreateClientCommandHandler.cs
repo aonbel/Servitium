@@ -10,30 +10,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Clients.Handlers;
 
-public sealed class CreateClientCommandHandler(IApplicationDbContext applicationDbContext,
-    UserManager<IdentityUser> userManager) : IRequestHandler<CreateClientCommand, Result<int>>
+public sealed class CreateClientCommandHandler(
+    IApplicationDbContext applicationDbContext) : IRequestHandler<CreateClientCommand, Result<int>>
 {
     public async Task<Result<int>> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
-        var userExists = await userManager.Users.AnyAsync(
-            u => u.Id == request.UserId, 
+        var personExists = await applicationDbContext.Persons.AnyAsync(
+            p => p.Id == request.PersonId,
             cancellationToken);
-        
-        if (!userExists)
+
+        if (!personExists)
         {
-            return UserErrors.NotFoundById(request.UserId);
+            return PersonErrors.NotFoundById(request.PersonId);
         }
-        
+
         var client = new Client
         {
-            UserId = request.UserId,
-            FirstName = request.FirstName,
-            MiddleName = request.MiddleName,
-            LastName = request.LastName,
-            Email = request.Email,
+            PersonId = request.PersonId,
             Birthday = request.Birthday,
-            Gender = request.Gender,
-            Phone = request.Phone
+            Gender = request.Gender
         };
 
         await applicationDbContext.Clients.AddAsync(client, cancellationToken);

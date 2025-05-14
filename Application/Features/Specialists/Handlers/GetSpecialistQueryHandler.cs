@@ -7,10 +7,10 @@ using MediatR;
 
 namespace Application.Features.Specialists.Handlers;
 
-public sealed class GetSpecialistQueryHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetSpecialistQuery, Result<Specialist>>
+public sealed class GetSpecialistByIdQueryHandler(IApplicationDbContext applicationDbContext)
+    : IRequestHandler<GetSpecialistByIdQuery, Result<Specialist>>
 {
-    public async Task<Result<Specialist>> Handle(GetSpecialistQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Specialist>> Handle(GetSpecialistByIdQuery request, CancellationToken cancellationToken)
     {
         var specialist = await applicationDbContext.Specialists.FindAsync([request.Id], cancellationToken);
 

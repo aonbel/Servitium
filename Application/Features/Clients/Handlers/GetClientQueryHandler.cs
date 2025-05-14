@@ -1,6 +1,7 @@
 using Application.Features.Clients.Queries;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
 using Infrastructure.Interfaces;
 using MediatR;
@@ -15,7 +16,7 @@ public sealed class GetClientByIdQueryHandler(IApplicationDbContext applicationD
 
         if (client is null)
         {
-            return new Error("ClientNotFound", "Client with given id does not exist");
+            return ClientErrors.NotFoundById(request.ClientId);
         }
         
         return client;

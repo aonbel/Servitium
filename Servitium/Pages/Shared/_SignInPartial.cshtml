@@ -1,9 +1,14 @@
+@using Servitium.Infrastructure
 @using Servitium.Pages
+@inject RoleSelectionService roleSelectionService
+@{
+    var currentRole = await roleSelectionService.GetSelectedRole();
+}
 <ul class="navbar-nav">
     @if (User.Identity!.IsAuthenticated)
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="/Profile/Manage" title="Manage">Hello @User.Identity?.Name</a>
+            <a class="nav-link text-dark" asp-page="/Profile/Manage" title="Manage">Hello @User.Identity?.Name, acting as: @currentRole</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-page="@Routes.LogOut" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">

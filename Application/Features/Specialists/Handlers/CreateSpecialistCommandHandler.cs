@@ -11,19 +11,18 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Features.Specialists.Handlers;
 
 public sealed class CreateSpecialistCommandHandler(
-    IApplicationDbContext applicationDbContext,
-    UserManager<IdentityUser> userManager)
+    IApplicationDbContext applicationDbContext)
     : IRequestHandler<CreateSpecialistCommand, Result<int>>
 {
     public async Task<Result<int>> Handle(CreateSpecialistCommand request, CancellationToken cancellationToken)
     {
-        var userExists = await userManager.Users.AnyAsync(
-            u => u.Id == request.UserId,
+        var personExists = await applicationDbContext.Persons.AnyAsync(
+            p => p.Id == request.PersonId,
             cancellationToken);
 
-        if (!userExists)
+        if (!personExists)
         {
-            return UserErrors.NotFoundById(request.UserId);
+            return PersonErrors.NotFoundById(request.PersonId);
         }
 
         var serviceProviderExists = await applicationDbContext.ServiceProviders.AnyAsync(
@@ -32,19 +31,12 @@ public sealed class CreateSpecialistCommandHandler(
 
         if (!serviceProviderExists)
         {
-            return new Error(
-                "ServiceProviderNotFound",
-                $"Service provider with given id {request.ServiceProviderId} does not exist");
+            return ServiceProviderErrors.NotFoundById(request.ServiceProviderId);
         }
 
         var specialist = new Specialist
         {
-            UserId = request.UserId,
-            FirstName = request.FirstName,
-            MiddleName = request.MiddleName,
-            LastName = request.LastName,
-            Email = request.Email,
-            Phone = request.Phone,
+            PersonId = request.PersonId,
             Contacts = request.Contacts,
             Location = request.Location,
             PricePerHour = request.PricePerHour,

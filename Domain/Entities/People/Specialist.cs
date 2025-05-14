@@ -3,8 +3,9 @@ using Domain.Entities.Services;
 
 namespace Domain.Entities.People;
 
-public class Specialist : Person
+public class Specialist : BaseEntity
 {
+    public required int PersonId { get; set; }
     public required decimal PricePerHour { get; set; }
     public required TimeOnlySegment WorkTime { get; set; }
     public required ICollection<DayOfWeek> WorkDays { get; set; }

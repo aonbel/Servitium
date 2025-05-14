@@ -5,4 +5,4 @@ using MediatR;
 
 namespace Application.Features.Specialists.Queries;
 
-public sealed record GetSpecialistQuery(int Id) : IRequest<Result<Specialist>>;
+public sealed record GetSpecialistByIdQuery(int Id) : IRequest<Result<Specialist>>;

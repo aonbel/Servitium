@@ -1,4 +1,5 @@
 using Application.Features.Appointments.Queries;
+using Application.Features.Clients.Queries;
 using Domain.Entities.Services;
 using Infrastructure.Authentification;
 using MediatR;
@@ -12,14 +13,28 @@ namespace Servitium.Pages.Appointments;
 public class Index(ISender sender) : PageModel
 {
     public ICollection<Appointment> Appointments { get; set; } = [];
-    
+
     public async Task<IActionResult> OnGetAsync()
     {
         var userId = User.GetUserId();
-        
-        var query = new GetAllAppointmentsByClientIdQuery(userId);
 
-        var response = await sender.Send(query);
+        var getClientByUserIdQuery = new GetClientByUserIdQuery(userId);
+
+        var getClientByUserIdQueryResponse = await sender.Send(getClientByUserIdQuery);
+
+        if (getClientByUserIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(
+                getClientByUserIdQueryResponse.Error.Code,
+                getClientByUserIdQueryResponse.Error.Message);
+            return LocalRedirect(Routes.Index);
+        }
+        
+        var client = getClientByUserIdQueryResponse.Value;
+
+        var getAllAppointmentsByClientIdQuery = new GetAllAppointmentsByClientIdQuery(client.Id ?? 0);
+
+        var response = await sender.Send(getAllAppointmentsByClientIdQuery);
 
         if (response.IsError)
         {

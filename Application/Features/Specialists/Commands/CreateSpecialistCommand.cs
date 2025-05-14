@@ -6,16 +6,10 @@ using MediatR;
 namespace Application.Features.Specialists.Commands;
 
 public sealed record CreateSpecialistCommand(
-    string UserId,
+    int PersonId,
     int ServiceProviderId,
-    string FirstName,
-    string MiddleName,
-    string LastName,
-    string Email,
-    string Phone,
     decimal PricePerHour,
     TimeOnlySegment WorkTime,
     DayOfWeek[] WorkDays,
     string[] Contacts,
-    string Location
-) : IRequest<Result<int>>;
+    string Location) : IRequest<Result<int>>;

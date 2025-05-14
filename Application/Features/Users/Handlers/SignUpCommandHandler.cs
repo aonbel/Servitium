@@ -47,7 +47,7 @@ public sealed class SignUpCommandHandler(
             var roleExist = await roleManager.RoleExistsAsync(role);
             if (!roleExist)
             {
-                return RoleErrors.RoleNotFoundByName(role);
+                return RoleErrors.NotFoundByName(role);
             }
             
             await userManager.AddToRoleAsync(user, role);

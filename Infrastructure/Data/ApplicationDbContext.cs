@@ -12,6 +12,7 @@ namespace Infrastructure.Data;
 public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<IdentityUser, IdentityRole, string>(options), IApplicationDbContext
 {
+    public DbSet<Person> Persons { get; set; }
     public DbSet<Client> Clients { get; set; }
     public DbSet<Specialist> Specialists { get; set; }
     public DbSet<ServiceProvider> ServiceProviders { get; set; }
