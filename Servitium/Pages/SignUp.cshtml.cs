@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Application.Features.Clients.Commands;
+using Application.Features.Persons.Commands;
 using Application.Features.Users.Commands;
 using Infrastructure.Authorization;
 using MediatR;
@@ -12,11 +13,10 @@ namespace Servitium.Pages;
 
 public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
 {
-    [BindProperty]
-    public InputModel Input { get; set; } = new ();
+    [BindProperty] public InputModel Input { get; set; } = new();
 
     public string? ReturnUrl { get; set; }
-    
+
     public class InputModel
     {
         [Required]
@@ -25,33 +25,34 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
         public string Username { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Lengths.MaxFirstName, ErrorMessage = ErrorMessages.UserFirstName, MinimumLength = Lengths.MinFirstName)]
+        [StringLength(Lengths.MaxFirstName, ErrorMessage = ErrorMessages.UserFirstName,
+            MinimumLength = Lengths.MinFirstName)]
         [Display(Name = "First name")]
         public string FirstName { get; set; } = string.Empty;
-        
+
         [Required]
-        [StringLength(Lengths.MaxMiddleName, ErrorMessage = ErrorMessages.UserMiddleName, MinimumLength = Lengths.MinMiddleName)]
+        [StringLength(Lengths.MaxMiddleName, ErrorMessage = ErrorMessages.UserMiddleName,
+            MinimumLength = Lengths.MinMiddleName)]
         [Display(Name = "Middle name")]
         public string MiddleName { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Lengths.MaxLastName, ErrorMessage = ErrorMessages.UserLastName, MinimumLength = Lengths.MinLastName)]
+        [StringLength(Lengths.MaxLastName, ErrorMessage = ErrorMessages.UserLastName,
+            MinimumLength = Lengths.MinLastName)]
         [Display(Name = "Last name")]
         public string LastName { get; set; } = string.Empty;
-        
+
         [Required]
         [Display(Name = "Birth date")]
         public string BirthDate { get; set; } = string.Empty;
-        
-        [Required]
-        [Display(Name = "Gender")]
-        public string Gender { get; set; } = string.Empty;
-        
+
+        [Required] [Display(Name = "Gender")] public string Gender { get; set; } = string.Empty;
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } = string.Empty;
-        
+
         [Required]
         [Display(Name = "Phone number")]
         public string Phone { get; set; } = string.Empty;
@@ -67,25 +68,25 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
         [Compare("Password", ErrorMessage = ErrorMessages.ConfirmPassword)]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
-    
+
     public void OnGet(string? returnUrl = null)
     {
         ReturnUrl = returnUrl ?? Url.Content(Routes.Index);
     }
-    
+
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
         returnUrl ??= Url.Content(Routes.Index);
-        
+
         if (!ModelState.IsValid) return Page();
-        
+
         var signUpCommand = new SignUpCommand(
             Input.Username,
             Input.Password,
             [ApplicationRoles.Client]);
-            
+
         var signUpCommandResult = await sender.Send(signUpCommand);
-        
+
         if (signUpCommandResult.IsError)
         {
             ModelState.AddModelError(string.Empty, signUpCommandResult.Error.Message);
@@ -93,28 +94,26 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
         }
 
         var userSignUpResponce = signUpCommandResult.Value;
-        
+
         tokenHandler.SetTokensIntoCookie(userSignUpResponce.AccessToken, userSignUpResponce.RefreshToken);
 
-        var createClientCommand = new CreateClientCommand(
-            userSignUpResponce.UserId,
+        var createPersonCommand = new CreatePersonCommand(
+            userSignUpResponce.User.Id,
             Input.FirstName,
-            Input.MiddleName,
             Input.LastName,
-            Input.Email,
+            Input.MiddleName,
             Input.Phone,
-            DateOnly.FromDateTime(DateTime.Now),
-            Input.Gender);
-        
-        var createClientCommandResult = await sender.Send(createClientCommand);
+            Input.Email);
 
-        if (createClientCommandResult.IsError)
+        var createPersonCommandResponce = await sender.Send(createPersonCommand);
+
+        if (createPersonCommandResponce.IsError)
         {
             // TODO add user deletion
-            ModelState.AddModelError(string.Empty, createClientCommandResult.Error.Message);
+            ModelState.AddModelError(createPersonCommandResponce.Error.Code, createPersonCommandResponce.Error.Message);
             return Page();
         }
-        
+
         return LocalRedirect(returnUrl);
     }
 }

@@ -1,10 +1,12 @@
 using Application.Features.Appointments.Queries;
 using Application.Features.Clients.Queries;
+using Application.Features.Persons.Queries;
 using Domain.Entities.Services;
 using Infrastructure.Authentification;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Servitium.Pages.Appointments;
@@ -18,19 +20,33 @@ public class Index(ISender sender) : PageModel
     {
         var userId = User.GetUserId();
 
-        var getClientByUserIdQuery = new GetClientByUserIdQuery(userId);
+        var getPersonByUserIdQuery = new GetPersonByUserIdQuery(userId);
 
-        var getClientByUserIdQueryResponse = await sender.Send(getClientByUserIdQuery);
+        var getPersonByUserIdQueryResponse = await sender.Send(getPersonByUserIdQuery);
 
-        if (getClientByUserIdQueryResponse.IsError)
+        if (getPersonByUserIdQueryResponse.IsError)
         {
             ModelState.AddModelError(
-                getClientByUserIdQueryResponse.Error.Code,
-                getClientByUserIdQueryResponse.Error.Message);
+                getPersonByUserIdQueryResponse.Error.Code,
+                getPersonByUserIdQueryResponse.Error.Message);
+            return LocalRedirect(Routes.Index);
+        }
+
+        var person = getPersonByUserIdQueryResponse.Value;
+
+        var getClientByPersonIdQuery = new GetClientByPersonIdQuery(person.Id ?? 0);
+
+        var getClientByPersonIdQueryResponse = await sender.Send(getClientByPersonIdQuery);
+
+        if (getClientByPersonIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(
+                getClientByPersonIdQueryResponse.Error.Code,
+                getClientByPersonIdQueryResponse.Error.Message);
             return LocalRedirect(Routes.Index);
         }
         
-        var client = getClientByUserIdQueryResponse.Value;
+        var client = getClientByPersonIdQueryResponse.Value;
 
         var getAllAppointmentsByClientIdQuery = new GetAllAppointmentsByClientIdQuery(client.Id ?? 0);
 

@@ -65,6 +65,6 @@ public sealed class SignUpCommandHandler(
         
         await applicationDbContext.SaveChangesAsync(cancellationToken);
 
-        return new SignUpCommandResponce(accessToken, refreshToken.Token, user.Id);
+        return new SignUpCommandResponce(accessToken, refreshToken.Token, user);
     }
 }

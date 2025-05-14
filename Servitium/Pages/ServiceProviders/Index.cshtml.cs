@@ -8,7 +8,7 @@ namespace Servitium.Pages.ServiceProviders;
 
 public class Index(ISender sender) : PageModel
 {
-    public ICollection<ServiceProvider> ServicesProviders { get; set; } = [];
+    public ICollection<ServiceProvider> Data { get; set; } = [];
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -27,7 +27,7 @@ public class Index(ISender sender) : PageModel
             return LocalRedirect(Routes.Index);
         }
 
-        ServicesProviders = response.Value;
+        Data = response.Value;
         
         return Page();
     }

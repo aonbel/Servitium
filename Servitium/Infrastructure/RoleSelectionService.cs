@@ -22,6 +22,11 @@ public class RoleSelectionService(UserManager<IdentityUser> userManager, IHttpCo
 
     public async Task<string> GetSelectedRole()
     {
+        if (!contextAccessor.HttpContext!.User.Identity!.IsAuthenticated)
+        {
+            return string.Empty;
+        }
+        
         var user = (await userManager.GetUserAsync(contextAccessor.HttpContext!.User))!;
 
         return contextAccessor.HttpContext.Request.Cookies["SelectedRole"] ??

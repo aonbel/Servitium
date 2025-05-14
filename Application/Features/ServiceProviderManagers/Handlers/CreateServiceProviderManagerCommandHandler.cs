@@ -36,7 +36,7 @@ public sealed class CreateServiceProviderManagerCommandHandler(
         var serviceProviderManager = new ServiceProviderManager
         {
             PersonId = request.PersonId,
-            ServiceProvider = serviceProvider
+            ServiceProviderId = request.ServiceProviderId
         };
 
         await applicationDbContext.ServiceProviderManagers.AddAsync(serviceProviderManager, cancellationToken);
