@@ -83,7 +83,7 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
         var signUpCommand = new SignUpCommand(
             Input.Username,
             Input.Password,
-            [ApplicationRoles.Client]);
+            [ApplicationRoles.Unauthenticated]);
 
         var signUpCommandResult = await sender.Send(signUpCommand);
 

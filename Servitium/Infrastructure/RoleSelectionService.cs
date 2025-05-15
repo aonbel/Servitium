@@ -29,7 +29,29 @@ public class RoleSelectionService(UserManager<IdentityUser> userManager, IHttpCo
         
         var user = (await userManager.GetUserAsync(contextAccessor.HttpContext!.User))!;
 
-        return contextAccessor.HttpContext.Request.Cookies["SelectedRole"] ??
-               (await userManager.GetRolesAsync(user)).FirstOrDefault()!;
+        var selectedRole = contextAccessor.HttpContext.Request.Cookies["SelectedRole"];
+        
+        var roles = await userManager.GetRolesAsync(user);
+
+        if (!roles.Any())
+        {
+            return string.Empty;
+        }
+
+        if (selectedRole is null)
+        {
+            return roles.First();
+        }
+
+        if (roles.Contains(selectedRole)) return selectedRole;
+        
+        ClearSelectedRole();
+        return roles.First();
+
+    }
+
+    public void ClearSelectedRole()
+    {
+        contextAccessor.HttpContext!.Response.Cookies.Delete("SelectedRole");
     }
 }

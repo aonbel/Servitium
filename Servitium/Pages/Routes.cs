@@ -10,6 +10,8 @@ internal static class Routes
     
     public const string UsersIndex = "/Users/Index";
     
+    public const string PersonsAdminIndex = "/Persons/Admin/Index";
+    
     public const string AppointmentsIndex = "/Appointments/Index";
     public const string AppointmentsAdminIndex = "/Appointments/Admin/Index";
     
@@ -17,4 +19,6 @@ internal static class Routes
     public const string ServiceProvidersAdminIndex = "/ServiceProviders/Admin/Index";
     public const string ServiceProviderDetails = "/ServiceProviders/Details";
     public const string ServiceProvidersCreate = "/ServiceProviders/Create";
+    
+    public const string ClientCreate = "/Clients/Create";
 }

@@ -55,24 +55,3 @@
         <a asp-page="@Routes.ServiceProvidersIndex" class="btn btn-secondary">Back to list</a>
     </div>
 </form>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    <script>
-        function adjustSelectSize() {
-            let select = document.getElementById('Input_SelectedRoles');
-            if (!select) {
-                console.error('Select element not found');
-                return;
-            }
-
-            let optionsCount = select.options.length;
-            let maxVisibleOptions = 5;
-
-            select.size = Math.min(optionsCount, maxVisibleOptions);
-        }
-
-        window.onload = adjustSelectSize;
-    </script>
-}

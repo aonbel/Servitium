@@ -3,6 +3,7 @@ using Application.Features.Clients.Queries;
 using Application.Features.Persons.Queries;
 using Domain.Entities.Services;
 using Infrastructure.Authentification;
+using Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Servitium.Pages.Appointments;
 
-[Authorize(Roles = "Client")]
+[Authorize(Roles = ApplicationRoles.Client)]
 public class Index(ISender sender) : PageModel
 {
     public ICollection<Appointment> Appointments { get; set; } = [];

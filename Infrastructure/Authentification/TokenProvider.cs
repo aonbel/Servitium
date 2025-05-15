@@ -25,7 +25,7 @@ public sealed class TokenProvider(
         var claims = new List<Claim>(
         [
             new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName!)
+            new Claim(ClaimTypes.Name, user.UserName)
         ]);
         
         using var scope = scopeFactory.CreateScope();

@@ -1,9 +1,14 @@
+@using Application.Features.Persons.Queries
+@using Infrastructure.Authentification
 @using Infrastructure.Authorization
+@using MediatR
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Servitium.Infrastructure
 @using Servitium.Pages
-@inject RoleSelectionService roleSelectionService
+@inject RoleSelectionService RoleSelectionService
+@inject ISender Sender
 @{
-    var selectedRole = await roleSelectionService.GetSelectedRole();
+    var selectedRole = await RoleSelectionService.GetSelectedRole();
 }
 <ul class="navbar-nav">
     <li class="nav-item">
@@ -15,26 +20,32 @@
     <li class="nav-item">
         <a class="nav-link text-dark" asp-page="@Routes.Privacy">Privacy</a>
     </li>
-    @if (selectedRole == ApplicationRoles.Admin)
+    @switch (selectedRole)
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="@Routes.UsersIndex">Users</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="@Routes.AppointmentsAdminIndex">Appointments</a>
-        </li>
-    }
-    else if (selectedRole == ApplicationRoles.Manager)
-    {
-        
-    }
-    else if (selectedRole == ApplicationRoles.Specialist)
-    {
-    }
-    else if (selectedRole == ApplicationRoles.Client)
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="@Routes.AppointmentsIndex">Appointments</a>
-        </li>
+        case ApplicationRoles.Admin:
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-page="@Routes.UsersIndex">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-page="@Routes.PersonsAdminIndex">Persons</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-page="@Routes.AppointmentsAdminIndex">Appointments</a>
+            </li>
+            break;
+        case ApplicationRoles.Manager:
+            break;
+        case ApplicationRoles.Specialist:
+            break;
+        case ApplicationRoles.Client:
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-page="@Routes.AppointmentsIndex">Appointments</a>
+            </li>
+            break;
+        case ApplicationRoles.Unauthenticated:
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-page="@Routes.ClientCreate" asp-route-id="@User.GetUserId()">Promote to a client</a>
+            </li>
+            break;
     }
 </ul>

@@ -8,13 +8,14 @@ using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages;
 
-public class LogOutModel(TokenHandler tokenHandler) : PageModel
+public class LogOutModel(TokenHandler tokenHandler, RoleSelectionService roleSelectionService) : PageModel
 {
     public IActionResult OnGet() => Page();
 
     public IActionResult OnPost(string? returnUrl = null)
     {
         tokenHandler.ClearTokens();
+        roleSelectionService.ClearSelectedRole();
         
         return LocalRedirect(returnUrl ?? Url.Content(Routes.Index));
     }
