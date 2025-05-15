@@ -21,4 +21,6 @@ internal static class Routes
     public const string ServiceProvidersCreate = "/ServiceProviders/Create";
     
     public const string ClientCreate = "/Clients/Create";
+    
+    public const string ServiceProviderManagerCreate = "/ServiceProviderManagers/Create";
 }

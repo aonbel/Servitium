@@ -33,6 +33,11 @@ public sealed class CreateClientCommandHandler(
             return UserErrors.NotFoundById(person.UserId);
         }
         
+        if (await userManager.IsInRoleAsync(user, ApplicationRoles.Client))
+        {
+            return UserErrors.RoleAlreadyAssignedToUser(ApplicationRoles.Client);
+        }
+        
         await userManager.AddToRoleAsync(user, ApplicationRoles.Client);
         
         if (await userManager.IsInRoleAsync(user, ApplicationRoles.Unauthenticated))

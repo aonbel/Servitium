@@ -16,4 +16,7 @@ public static class UserErrors
     
     public static Error RolesNumberShouldBeAtLeastOne() =>
         new Error("RolesNumberShouldBeAtLeastOne", $"Roles number should be at least one");
+    
+    public static Error RoleAlreadyAssignedToUser(string role) =>
+        new Error("RoleAlreadyAssignedToUser", $"Role {role} already assigned to user");
 }

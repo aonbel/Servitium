@@ -3,6 +3,7 @@ using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
+using Infrastructure.Authorization;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -13,9 +14,9 @@ namespace Application.Features.ServiceProviderManagers.Handlers;
 public sealed class CreateServiceProviderManagerCommandHandler(
     IApplicationDbContext applicationDbContext,
     UserManager<IdentityUser> userManager)
-    : IRequestHandler<CreateServiceProviderManagerCommand, Result<int>>
+    : IRequestHandler<CreateServiceProviderManagerCommand, Result<ServiceProviderManager>>
 {
-    public async Task<Result<int>> Handle(CreateServiceProviderManagerCommand request,
+    public async Task<Result<ServiceProviderManager>> Handle(CreateServiceProviderManagerCommand request,
         CancellationToken cancellationToken)
     {
         var serviceProvider =
@@ -26,11 +27,30 @@ public sealed class CreateServiceProviderManagerCommandHandler(
             return ServiceProviderErrors.NotFoundById(request.ServiceProviderId);
         }
 
-        var user = await applicationDbContext.Persons.SingleOrDefaultAsync(u => u.Id == request.PersonId, cancellationToken);
+        var person = await applicationDbContext.Persons.SingleOrDefaultAsync(p => p.Id == request.PersonId, cancellationToken);
+
+        if (person is null)
+        {
+            return PersonErrors.NotFoundById(request.PersonId);
+        }
+        
+        var user = await userManager.FindByIdAsync(person.UserId);
 
         if (user is null)
         {
-            return PersonErrors.NotFoundById(request.PersonId);
+            return UserErrors.NotFoundById(person.UserId);
+        }
+
+        if (await userManager.IsInRoleAsync(user, ApplicationRoles.Manager))
+        {
+            return UserErrors.RoleAlreadyAssignedToUser(ApplicationRoles.Manager);
+        }
+
+        await userManager.AddToRoleAsync(user, ApplicationRoles.Manager);
+        
+        if (await userManager.IsInRoleAsync(user, ApplicationRoles.Unauthenticated))
+        {
+            await userManager.RemoveFromRoleAsync(user, ApplicationRoles.Unauthenticated);
         }
 
         var serviceProviderManager = new ServiceProviderManager
@@ -41,6 +61,8 @@ public sealed class CreateServiceProviderManagerCommandHandler(
 
         await applicationDbContext.ServiceProviderManagers.AddAsync(serviceProviderManager, cancellationToken);
 
-        return await applicationDbContext.SaveChangesAsync(cancellationToken);
+        await applicationDbContext.SaveChangesAsync(cancellationToken);
+        
+        return serviceProviderManager;
     }
 }
