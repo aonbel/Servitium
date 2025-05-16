@@ -2,6 +2,7 @@ using Application.Features.HealthCertificateTemplates.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

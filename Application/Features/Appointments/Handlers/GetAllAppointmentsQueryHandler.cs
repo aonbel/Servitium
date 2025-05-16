@@ -1,6 +1,7 @@
 using Application.Features.Appointments.Queries;
 using Domain.Abstractions.Result;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

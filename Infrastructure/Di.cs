@@ -1,4 +1,5 @@
 using System.Text;
+using Domain.Interfaces;
 using Infrastructure.Authentification;
 using Infrastructure.Authorization;
 using Infrastructure.Data;

@@ -3,6 +3,7 @@ using Application.Features.Users.Responces;
 using Domain.Abstractions.RefreshToken;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using Infrastructure.Options.Authentication;
 using MediatR;

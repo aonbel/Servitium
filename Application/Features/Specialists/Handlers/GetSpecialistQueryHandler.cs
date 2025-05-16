@@ -1,7 +1,9 @@
 using Application.Features.Specialists.Queries;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 
@@ -16,7 +18,7 @@ public sealed class GetSpecialistByIdQueryHandler(IApplicationDbContext applicat
 
         if (specialist is null)
         {
-            return new Error("SpecialistNotFound", $"Specialist with given id {request.Id} does not exist");
+            return SpecialistErrors.NotFoundById(request.Id);
         }
         
         return specialist;

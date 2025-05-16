@@ -1,7 +1,9 @@
 using Application.Features.HealthСertificatates.Queries;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 
@@ -17,19 +19,22 @@ public sealed class GetLatestHealthCertificateQueryHandler(IApplicationDbContext
 
         if (client is null)
         {
-            return new Error("ClientNotFound", "Client with given username does not exist");
+            return ClientErrors.NotFoundById(request.ClientId);
         }
 
-        var certificate = client.ServiceResults
-            .Where(certificate => certificate.TemplateId == request.HealthCertificateTemplateId)
-            .MaxBy(certificate => certificate.ReceivingTime);
-
-        if (certificate is null)
+        foreach (var serviceResultsId in client.ServiceResultsIds)
         {
-            return new Error("HealthCertificateNotFound",
-                "Health certificate with given template id does not exist for given client");
+            var healthCertificate =
+                (await applicationDbContext.HealthCertificates.FindAsync([serviceResultsId], cancellationToken))!;
+
+            if (healthCertificate.TemplateId == request.HealthCertificateTemplateId)
+            {
+                return healthCertificate;
+            }
         }
-        
-        return certificate;
+
+        return HealthCertificateErrors.NotFoundByTemplateIdAmongHealthCertificatesOfClient(
+            request.ClientId,
+            request.HealthCertificateTemplateId);
     }
 }

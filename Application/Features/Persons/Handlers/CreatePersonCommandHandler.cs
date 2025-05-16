@@ -2,6 +2,7 @@ using Application.Features.Persons.Commands;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

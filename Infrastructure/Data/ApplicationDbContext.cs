@@ -1,6 +1,7 @@
 using Domain.Abstractions.RefreshToken;
 using Domain.Entities.People;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Authorization;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;

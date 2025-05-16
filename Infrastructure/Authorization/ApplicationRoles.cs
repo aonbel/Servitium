@@ -7,6 +7,8 @@ public static class ApplicationRoles
     public const string Specialist = "Specialist";
     public const string Client = "Client";
     public const string Unauthenticated = "Unauthenticated";
+    
+    public const string AdminOrManager = $"{Admin}, {Manager}";
 
     public static readonly string[] AllRoles = [Admin, Manager, Specialist, Client, Unauthenticated];
 }

@@ -3,7 +3,7 @@ using Domain.Entities.People;
 using Domain.Entities.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Interfaces;
+namespace Domain.Interfaces;
 
 public interface IApplicationDbContext
 {

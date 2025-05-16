@@ -1,6 +1,7 @@
 using Application.Features.ServiceProviderManagers.Queries;
 using Domain.Abstractions.Result;
 using Domain.Entities.People;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

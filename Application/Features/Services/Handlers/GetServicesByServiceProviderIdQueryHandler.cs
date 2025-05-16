@@ -1,7 +1,9 @@
 using Application.Features.Services.Queries;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 
@@ -18,9 +20,10 @@ public sealed class GetServicesByServiceProviderIdQueryHandler(IApplicationDbCon
 
         if (serviceProvider is null)
         {
-            return new Error("ServiceProviderNotFound",
-                $"Service provider with given id {request.ServiceProviderId} does not exist");
+            return ServiceProviderErrors.NotFoundById(request.ServiceProviderId);
         }
+
+        // TODO
         
         return serviceProvider.Services.ToList();
     }

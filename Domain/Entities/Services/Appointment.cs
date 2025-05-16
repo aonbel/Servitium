@@ -5,10 +5,9 @@ namespace Domain.Entities.Services;
 
 public class Appointment : BaseEntity
 {
-    public required Client Client { get; set; }
-    public required Specialist Specialist { get; set; }
-    public required Service Service { get; set; }
-    
+    public required int ClientId { get; set; }
+    public required int SpecialistId { get; set; }
+    public required int ServiceId { get; set; }
     public required DateOnly Date { get; set; }
     public required TimeOnlySegment TimeSegment { get; set; }
 }

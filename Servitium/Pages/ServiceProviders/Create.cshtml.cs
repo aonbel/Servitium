@@ -11,15 +11,6 @@ namespace Servitium.Pages.ServiceProviders;
 
 public class Create(ISender sender) : PageModel
 {
-    public List<SelectListItem> DaysOfWeekList { get; set; } = Enum
-        .GetValues<DayOfWeek>()
-        .Select(d => new SelectListItem
-        {
-            Text = d.ToString(),
-            Value = ((int)d).ToString()
-        })
-        .ToList();
-    
     [BindProperty]
     public InputModel Input { get; set; } = new();
 
@@ -70,11 +61,6 @@ public class Create(ISender sender) : PageModel
         public List<DayOfWeek> SelectedWorkDays { get; set; } = [];
 
         [Display(Name = "Contacts")] public string Contacts { get; set; } = string.Empty;
-    }
-
-    public IActionResult OnGet()
-    {
-        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()

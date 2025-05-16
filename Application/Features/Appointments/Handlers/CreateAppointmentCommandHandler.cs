@@ -1,7 +1,10 @@
 using Application.Features.Appointments.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
+using Domain.Entities.People;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,17 +20,17 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext applic
 
         if (specialist is null)
         {
-            return new Error("SpecialistNotFound", $"Specialist with given id {request.SpecialistId} does not exist");
+            return SpecialistErrors.NotFoundById(request.SpecialistId);
         }
 
         var isTimeFreeFromAppointments = await applicationDbContext.Appointments
-            .Where(a => a.Specialist.Id == request.SpecialistId)
+            .Where(a => a.SpecialistId == request.SpecialistId)
             .AllAsync(a => a.Date != request.Date || !request.TimeSegment.IsIntersecting(a.TimeSegment),
                 cancellationToken);
 
         if (!isTimeFreeFromAppointments)
         {
-            return new Error("TimeSegmentIsInvalid", "There already exists an appointment at given time");
+            return AppointmentErrors.AppointmentAlreadyExists();
         }
 
         var isInWorkTime = specialist.WorkDays.Contains(request.Date.DayOfWeek) &&
@@ -35,15 +38,21 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext applic
 
         if (!isInWorkTime)
         {
-            return new Error("TimeSegmentIsInvalid", "Given time segment is not at work time of specialist");
+            return AppointmentErrors.AppointmentIsNotAtTimeOfWork();
         }
-        
-        var service = specialist.Services.FirstOrDefault(s => s.Id == request.ServiceId);
+
+        var service = await applicationDbContext.Services.FindAsync([request.ServiceId], cancellationToken);
 
         if (service is null)
         {
-            return new Error("ServiceNotFound",
-                $"Service with given id {request.ServiceId} does not exist among specialist services");
+            return ServiceErrors.NotFoundById(request.ServiceId);
+        }
+
+        var specialistCanProvideService = specialist.ServiceIds.Contains(request.ServiceId);
+
+        if (!specialistCanProvideService)
+        {
+            return SpecialistErrors.SpecialistDoesNotHaveService(specialist.Id ?? 0, request.ServiceId);
         }
 
         var client = await applicationDbContext.Clients.FindAsync([request.ClientId], cancellationToken);
@@ -52,12 +61,12 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext applic
         {
             return new Error("ClientNotFound", $"Client with given id {request.ClientId} does not exist");
         }
-        
+
         var appointment = new Appointment
         {
-            Client = client,
-            Specialist = specialist,
-            Service = service,
+            ClientId = request.ClientId,
+            SpecialistId = request.SpecialistId,
+            ServiceId = request.ServiceId,
             Date = request.Date,
             TimeSegment = request.TimeSegment
         };

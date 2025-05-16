@@ -1,4 +1,5 @@
 @page
+@using Servitium.Infrastructure.PagesConstants
 @using Servitium.Pages
 @model Servitium.Pages.ServiceProviders.Create
 
@@ -42,7 +43,7 @@
     </div>
     <div class="mb-3">
         <label asp-for="Input.SelectedWorkDays">Select work days</label>
-        <select asp-for="Input.SelectedWorkDays" asp-items="Model.DaysOfWeekList" class="form-control" multiple></select>
+        <select asp-for="Input.SelectedWorkDays" asp-items="DaysOfWeek.DaysOfWeekSelectList" class="form-control" multiple></select>
         <span asp-validation-for="Input.SelectedWorkDays" class="text-danger"></span>
     </div>
     <div class="form-floating mb-3">

@@ -2,6 +2,7 @@ using Application.Features.ServiceProviders.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 
@@ -20,9 +21,7 @@ public sealed class CreateServiceProviderCommandHandler(IApplicationDbContext ap
             Coordinates = request.Coordinates,
             Contacts = request.Contacts,
             WorkTime = request.WorkTime,
-            WorkDays = request.WorkDays,
-            Services = [],
-            Specialists = []
+            WorkDays = request.WorkDays
         };
 
         await applicationDbContext.ServiceProviders.AddAsync(serviceProvider, cancellationToken);

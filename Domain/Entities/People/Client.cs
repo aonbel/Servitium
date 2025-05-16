@@ -8,5 +8,5 @@ public class Client : BaseEntity
     public required int PersonId { get; set; }
     public required DateOnly Birthday { get; set; }
     public required string Gender { get; set; }
-    public ICollection<HealthCertificate> ServiceResults { get; set; } = [];
+    public ICollection<int> ServiceResultsIds { get; set; } = [];
 }

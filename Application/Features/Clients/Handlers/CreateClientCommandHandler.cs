@@ -3,6 +3,7 @@ using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
+using Domain.Interfaces;
 using Infrastructure.Authorization;
 using Infrastructure.Interfaces;
 using MediatR;

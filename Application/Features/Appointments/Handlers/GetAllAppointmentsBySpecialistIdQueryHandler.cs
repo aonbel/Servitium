@@ -2,6 +2,7 @@ using Application.Features.Appointments.Queries;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
 using Domain.Entities.Services;
+using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ public sealed class GetAllAppointmentsBySpecialistIdQueryHandler(IApplicationDbC
         CancellationToken cancellationToken)
     {
         var appointments = await applicationDbContext.Appointments
-            .Where(a => a.Client.Id == request.SpecialistId)
+            .Where(a => a.SpecialistId == request.SpecialistId)
             .ToListAsync(cancellationToken);
 
         return appointments;
