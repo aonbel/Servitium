@@ -1,18 +1,16 @@
-using Application.Features.Services.Queries;
+using Application.Features.Specialists.Queries;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
-using Domain.Entities.Services;
+using Domain.Entities.People;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Services.Handlers;
+namespace Application.Features.Specialists.Handlers;
 
-public sealed class GetServicesByServiceProviderIdQueryHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetServicesByServiceProviderIdQuery, Result<ICollection<Service>>>
+public class GetSpecialistsByServiceProviderIdQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetSpecialistsByServiceProviderIdQuery, Result<ICollection<Specialist>>>
 {
-    public async Task<Result<ICollection<Service>>> Handle(GetServicesByServiceProviderIdQuery request,
-        CancellationToken cancellationToken)
+    public async Task<Result<ICollection<Specialist>>> Handle(GetSpecialistsByServiceProviderIdQuery request, CancellationToken cancellationToken)
     {
         var serviceProvider =
             await applicationDbContext.ServiceProviders.FindAsync([request.ServiceProviderId], cancellationToken);
@@ -25,9 +23,7 @@ public sealed class GetServicesByServiceProviderIdQueryHandler(IApplicationDbCon
         var specialists = await applicationDbContext.Specialists
             .Where(s => s.ServiceProviderId == request.ServiceProviderId)
             .ToListAsync(cancellationToken);
-        
-        // TODO
 
-        throw new NotImplementedException();
+        return specialists;
     }
 }

@@ -26,4 +26,7 @@ internal static class Routes
     public const string ServiceProviderManagerCreate = "/ServiceProviderManagers/Create";
     
     public const string SpecialistManagerCreate = "/Specialists/Manager/Create";
+    
+    public const string HealthCertificateTemplatesAdminIndex = "/HealthCertificateTemplates/Admin/Index";
+    public const string HealthCertificateTemplatesCreate = "/HealthCertificateTemplates/Create";
 }

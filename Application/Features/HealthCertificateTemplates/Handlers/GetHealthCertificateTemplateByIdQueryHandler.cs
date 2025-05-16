@@ -1,6 +1,7 @@
 using Application.Features.HealthCertificateTemplates.Queries;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.Services;
 using Domain.Interfaces;
 using Infrastructure.Interfaces;
@@ -20,8 +21,7 @@ public sealed class GetHealthCertificateTemplateByIdQueryHandler(IApplicationDbC
 
         if (healthCertificateTemplate is null)
         {
-            return new Error("HealthCertificateNotFound",
-                $"Health certificate with given id {request.HealthCertificateTemplateId} does not exist.");
+            return HealthCertificateTemplateErrors.NotFoundById(request.HealthCertificateTemplateId);
         }
         
         return healthCertificateTemplate;

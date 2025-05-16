@@ -11,5 +11,4 @@ public class ServiceProvider : Entity
     public required TimeOnlySegment WorkTime { get; set; }
     public required ICollection<DayOfWeek> WorkDays { get; set; }
     public required ICollection<string> Contacts { get; set; }
-    public ICollection<Service> Services { get; set; } = [];
 }

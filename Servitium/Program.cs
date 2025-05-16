@@ -7,6 +7,7 @@ using Servitium;
 using Servitium.Infrastructure;
 using Serilog;
 using Servitium.Middleware;
+using Servitium.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,16 +31,12 @@ app.UseRouting();
 app.Use(async (context, next) =>
 {
     Console.WriteLine($"{context.Request.Path}");
-    var token = context.Request.Cookies["AccessToken"];
-    if (!string.IsNullOrEmpty(token))
+    var accessToken = context.Request.Cookies["AccessToken"];
+    if (!string.IsNullOrEmpty(accessToken))
     {
-        Console.WriteLine($"AccessToken from cookie: {token}");
-        context.Request.Headers.Append("Authorization", $"Bearer {token}");
+        context.Request.Headers.Append("Authorization", $"Bearer {accessToken}");
     }
-    else
-    {
-        Console.WriteLine("No AccessToken cookie found");
-    }
+
     await next();
 });
 
@@ -49,28 +46,29 @@ app.UseAuthorization();
 
 app.Use(async (context, next) =>
 {
-    if (context.Response.StatusCode == 401 &&
-        context.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken))
+    var gotRefreshToken = context.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken);
+    var gotAccessToken = context.Request.Cookies.TryGetValue("AccessToken", out _);
+
+    if (gotRefreshToken && (!gotAccessToken || context.Response.StatusCode == 401))
     {
         var sender = context.RequestServices.GetRequiredService<ISender>();
         var tokenHandler = context.RequestServices.GetRequiredService<TokenHandler>();
-
-        var signInByTokenCommand = new SignInByTokenCommand(refreshToken);
+        
+        var signInByTokenCommand = new SignInByTokenCommand(refreshToken!);
 
         var commandResult = await sender.Send(signInByTokenCommand);
-
+        
         if (commandResult.IsError)
         {
             tokenHandler.ClearTokens();
-
-            context.Response.Redirect("/SignIn");
-            return;
         }
+        else
+        {
+            var responce = commandResult.Value;
 
-        var responce = commandResult.Value;
-
-        tokenHandler.SetTokensIntoCookie(responce.AccessToken, responce.RefreshToken);
-
+            tokenHandler.SetTokensIntoCookie(responce.AccessToken, responce.RefreshToken);
+        }
+        
         context.Response.Redirect(context.Request.GetEncodedUrl());
     }
 

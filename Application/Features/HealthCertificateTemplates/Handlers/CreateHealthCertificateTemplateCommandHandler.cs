@@ -1,6 +1,7 @@
 using Application.Features.HealthCertificateTemplates.Commands;
 using Domain.Abstractions;
 using Domain.Abstractions.Result;
+using Domain.Abstractions.Result.Errors;
 using Domain.Entities.Services;
 using Domain.Interfaces;
 using Infrastructure.Interfaces;
@@ -10,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Features.HealthCertificateTemplates.Handlers;
 
 public sealed class CreateHealthCertificateTemplateCommandHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<CreateHealthCertificateTemplateCommand, Result<int>>
+    : IRequestHandler<CreateHealthCertificateTemplateCommand, Result<HealthCertificateTemplate>>
 {
-    public async Task<Result<int>> Handle(CreateHealthCertificateTemplateCommand request,
+    public async Task<Result<HealthCertificateTemplate>> Handle(CreateHealthCertificateTemplateCommand request,
         CancellationToken cancellationToken)
     {
         var healthCertificateTemplateWithGivenName =
@@ -21,8 +22,7 @@ public sealed class CreateHealthCertificateTemplateCommandHandler(IApplicationDb
 
         if (healthCertificateTemplateWithGivenName is not null)
         {
-            return new Error("HealthCertificateNameAlreadyExists",
-                "Given health certificate name already exists");
+            return HealthCertificateTemplateErrors.TemplateWithGivenNameAlreadyExists(request.Name);
         }
 
         var healthCertificateTemplate = new HealthCertificateTemplate
@@ -33,6 +33,8 @@ public sealed class CreateHealthCertificateTemplateCommandHandler(IApplicationDb
         
         await applicationDbContext.HealthCertificateTemplates.AddAsync(healthCertificateTemplate, cancellationToken);
         
-        return await applicationDbContext.SaveChangesAsync(cancellationToken);
+        await applicationDbContext.SaveChangesAsync(cancellationToken);
+        
+        return healthCertificateTemplate;
     }
 }
