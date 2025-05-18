@@ -10,6 +10,6 @@ public sealed record CreateServiceCommand(
     string Description,
     ICollection<int> RequirementIds,
     ICollection<int> ResultIds,
-    float PricePerHourForMaterials,
-    float PricePerHourForEquipment,
+    decimal PricePerHourForMaterials,
+    decimal PricePerHourForEquipment,
     TimeSpan Duration) : IRequest<Result<int>>;

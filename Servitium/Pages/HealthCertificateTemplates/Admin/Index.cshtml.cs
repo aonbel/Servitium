@@ -22,7 +22,9 @@ public class Index(ISender sender) : PageModel
             return Page();
         }
         
-        Data = getAllHealthCertificateTemplatesResponse.Value;
+        var healthCertificateTemplates = getAllHealthCertificateTemplatesResponse.Value;
+        
+        Data = healthCertificateTemplates;
         
         return Page();
     }

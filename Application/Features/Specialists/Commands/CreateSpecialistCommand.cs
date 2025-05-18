@@ -13,4 +13,5 @@ public sealed record CreateSpecialistCommand(
     TimeOnlySegment WorkTime,
     ICollection<DayOfWeek> WorkDays,
     ICollection<string> Contacts,
-    string Location) : IRequest<Result<Specialist>>;
+    string Location,
+    ICollection<int> ServiceIds) : IRequest<Result<Specialist>>;

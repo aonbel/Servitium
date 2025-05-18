@@ -1,0 +1,56 @@
+@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Servitium.Pages
+@model Servitium.Pages.Services.Create
+
+<h1>Add a new service</h1>
+
+<form method="post" asp-antiforgery="true">
+    <div class="form-floating mb-3">
+        <input asp-for="Input.Name" class="form-control" aria-required="true"/>
+        <label asp-for="Input.Name" class="control-label"></label>
+        <span asp-validation-for="Input.Name" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.ShortName" class="form-control" aria-required="true"/>
+        <label asp-for="Input.ShortName" class="control-label"></label>
+        <span asp-validation-for="Input.ShortName" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.Description" class="form-control" aria-required="true"/>
+        <label asp-for="Input.Description" class="control-label"></label>
+        <span asp-validation-for="Input.Description" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.PricePerHourForEquipment" class="form-control" aria-required="true"/>
+        <label asp-for="Input.PricePerHourForEquipment" class="control-label"></label>
+        <span asp-validation-for="Input.PricePerHourForEquipment" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.PricePerHourForMaterials" class="form-control" aria-required="true"/>
+        <label asp-for="Input.PricePerHourForMaterials" class="control-label"></label>
+        <span asp-validation-for="Input.PricePerHourForMaterials" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.Duration" class="form-control" aria-required="true"/>
+        <label asp-for="Input.Duration" class="control-label"></label>
+        <span asp-validation-for="Input.Duration" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Input.RequiredHealthCertificateTemplateIds" class="control-label"></label>
+        <select multiple asp-for="Input.RequiredHealthCertificateTemplateIds"
+                asp-items="Model.HealthCertificateTemplates" class="form-control"
+                aria-required="true"></select>
+        <span asp-validation-for="Input.RequiredHealthCertificateTemplateIds" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Input.ResultHealthCertificateTemplateIds" class="control-label"></label>
+        <select multiple asp-for="Input.ResultHealthCertificateTemplateIds"
+                asp-items="Model.HealthCertificateTemplates" class="form-control"
+                aria-required="true"></select>
+        <span asp-validation-for="Input.ResultHealthCertificateTemplateIds" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Create" class="btn btn-primary"/>
+    </div>
+</form>

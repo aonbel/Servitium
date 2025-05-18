@@ -29,4 +29,7 @@ internal static class Routes
     
     public const string HealthCertificateTemplatesAdminIndex = "/HealthCertificateTemplates/Admin/Index";
     public const string HealthCertificateTemplatesCreate = "/HealthCertificateTemplates/Create";
+    
+    public const string ServicesAdminIndex = "/Services/Admin/Index";
+    public const string ServiceCreate = "/Services/Create";
 }

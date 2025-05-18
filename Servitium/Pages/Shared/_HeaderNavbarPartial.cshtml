@@ -12,13 +12,7 @@
 }
 <ul class="navbar-nav">
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-page="@Routes.Index">Home</a>
-    </li>
-    <li class="nav-item">
         <a class="nav-link text-dark" asp-page="@Routes.ServiceProvidersIndex">Service providers</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-page="@Routes.Privacy">Privacy</a>
     </li>
     @switch (selectedRole)
     {
@@ -34,6 +28,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-page="@Routes.HealthCertificateTemplatesAdminIndex">Templates</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-page="@Routes.ServicesAdminIndex">Services</a>
             </li>
             break;
         case ApplicationRoles.Manager:
@@ -54,4 +51,7 @@
             </li>
             break;
     }
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-page="@Routes.Privacy">Privacy</a>
+    </li>
 </ul>

@@ -63,10 +63,12 @@ public sealed class CreateSpecialistCommandHandler(
             PricePerHour = request.PricePerHour,
             WorkTime = request.WorkTime,
             WorkDays = request.WorkDays,
-            ServiceIds = []
+            ServiceIds = request.ServiceIds
         };
 
         await applicationDbContext.Specialists.AddAsync(specialist, cancellationToken);
+        
+        await applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return specialist;
     }

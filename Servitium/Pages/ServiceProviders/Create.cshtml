@@ -41,7 +41,7 @@
         <label asp-for="Input.WorkEndTime" class="control-label"></label>
         <span asp-validation-for="Input.WorkEndTime" class="text-danger"></span>
     </div>
-    <div class="mb-3">
+    <div class="form-group mb-3">
         <label asp-for="Input.SelectedWorkDays">Select work days</label>
         <select asp-for="Input.SelectedWorkDays" asp-items="DaysOfWeek.DaysOfWeekSelectList" class="form-control" multiple></select>
         <span asp-validation-for="Input.SelectedWorkDays" class="text-danger"></span>
