@@ -86,7 +86,7 @@ public class
                 result.Add((TypeOfResult.HealthCertificateTemplateId, templateId));
 
                 healthCertificateTemplateIdQueue.Enqueue(templateId);
-            }
+            }   
         }
 
         return new GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdResponse(result);
