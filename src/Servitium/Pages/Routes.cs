@@ -15,11 +15,13 @@ internal static class Routes
     
     public const string AppointmentsIndex = "/Appointments/Index";
     public const string AppointmentsAdminIndex = "/Appointments/Admin/Index";
+    public const string AppointmentDetails = "/Appointments/Details";
+    public const string AppointmentCreate = "/Appointments/Create";
     
     public const string ServiceProvidersIndex = "/ServiceProviders/Index";
     public const string ServiceProvidersAdminIndex = "/ServiceProviders/Admin/Index";
     public const string ServiceProviderDetails = "/ServiceProviders/Details";
-    public const string ServiceProvidersCreate = "/ServiceProviders/Create";
+    public const string ServiceProviderCreate = "/ServiceProviders/Create";
     
     public const string ClientCreate = "/Clients/Create";
     
@@ -28,7 +30,9 @@ internal static class Routes
     public const string SpecialistManagerCreate = "/Specialists/Manager/Create";
     
     public const string HealthCertificateTemplatesAdminIndex = "/HealthCertificateTemplates/Admin/Index";
-    public const string HealthCertificateTemplatesCreate = "/HealthCertificateTemplates/Create";
+    public const string HealthCertificateTemplateCreate = "/HealthCertificateTemplates/Create";
+    
+    public const string HealthCertificateDetails = "/HealthCertificates/Details";
     
     public const string ServicesAdminIndex = "/Services/Admin/Index";
     public const string ServiceCreate = "/Services/Create";

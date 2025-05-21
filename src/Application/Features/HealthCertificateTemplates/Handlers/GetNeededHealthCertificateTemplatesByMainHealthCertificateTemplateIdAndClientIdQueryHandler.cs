@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Features.HealthCertificateTemplates.Handlers;
 
 public class
-    GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdHandler(
+    GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryHandler(
         IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientId,
-        Result<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdResponse>>
+    : IRequestHandler<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery,
+        Result<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse>>
 {
-    public async Task<Result<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdResponse>>
-        Handle(GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientId request,
+    public async Task<Result<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse>>
+        Handle(GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery request,
             CancellationToken cancellationToken)
     {
         var client = await applicationDbContext.Clients.FindAsync([request.ClientId], cancellationToken);
@@ -38,7 +38,7 @@ public class
 
         healthCertificateTemplateIdQueue.Enqueue(request.HealthCertificateTemplateId);
 
-        List<(TypeOfResult, int)> result = [];
+        List<Requirement> result = [];
 
         while (healthCertificateTemplateIdQueue.Count > 0)
         {
@@ -56,12 +56,14 @@ public class
 
             foreach (var templateId in neededHealthCertificateTemplateIds)
             {
-                var certificate = await applicationDbContext.HealthCertificates
-                    .FirstOrDefaultAsync(c => c.TemplateId == templateId, cancellationToken);
+                var certificate = applicationDbContext.HealthCertificates
+                    .Where(c => c.TemplateId == templateId)
+                    .MaxBy(c => c.ReceivingTime);
 
-                if (certificate is not null)
+                if (certificate is not null && 
+                    certificate.ReceivingTime.AddDays(certificate.ActivePeriod.Days) >= DateOnly.FromDateTime(DateTime.Today))
                 {
-                    result.Add((TypeOfResult.HealthCertificateId, certificate.Id ?? 0));
+                    result.Add(new Requirement(TypeOfRequirement.HealthCertificateId, certificate.Id ?? 0));
 
                     continue;
                 }
@@ -78,18 +80,18 @@ public class
 
                 if (appointment is not null)
                 {
-                    result.Add((TypeOfResult.AppointmentId, appointment.Id ?? 0));
+                    result.Add(new Requirement(TypeOfRequirement.AppointmentId, appointment.Id ?? 0));
 
                     continue;
                 }
 
-                result.Add((TypeOfResult.HealthCertificateTemplateId, templateId));
+                result.Add(new Requirement(TypeOfRequirement.HealthCertificateTemplateId, templateId));
 
                 healthCertificateTemplateIdQueue.Enqueue(templateId);
             }   
         }
 
-        return new GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdResponse(result);
+        return new GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse(result);
     }
 
     private async Task<Result<ICollection<int>>> GetNeededHealthCertificateTemplatesIds(int healthCertificateTemplateId,

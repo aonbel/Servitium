@@ -22,12 +22,27 @@ public sealed class GetServicesByServiceProviderIdQueryHandler(IApplicationDbCon
             return ServiceProviderErrors.NotFoundById(request.ServiceProviderId);
         }
 
-        var specialists = await applicationDbContext.Specialists
-            .Where(s => s.ServiceProviderId == request.ServiceProviderId)
-            .ToListAsync(cancellationToken);
-        
-        // TODO
+        var specialists = applicationDbContext.Specialists
+            .Where(s => s.ServiceProviderId == request.ServiceProviderId);
 
-        throw new NotImplementedException();
+        var serviceIds = specialists
+            .SelectMany(specialist => specialist.ServiceIds)
+            .Distinct();
+        
+        List<Service> services = [];
+        
+        foreach (var serviceId in serviceIds)
+        {
+            var service = await applicationDbContext.Services.FindAsync([serviceId], cancellationToken);
+
+            if (service is null)
+            {
+                return ServiceErrors.NotFoundById(serviceId);
+            }
+            
+            services.Add(service);
+        }
+
+        return services;
     }
 }

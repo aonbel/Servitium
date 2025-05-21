@@ -43,12 +43,6 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
         public string LastName { get; set; } = string.Empty;
 
         [Required]
-        [Display(Name = "Birth date")]
-        public string BirthDate { get; set; } = string.Empty;
-
-        [Required] [Display(Name = "Gender")] public string Gender { get; set; } = string.Empty;
-
-        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } = string.Empty;
