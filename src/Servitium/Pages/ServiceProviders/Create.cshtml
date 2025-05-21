@@ -1,0 +1,58 @@
+@page
+@using Servitium.Infrastructure.PagesConstants
+@using Servitium.Pages
+@model Servitium.Pages.ServiceProviders.Create
+
+<h1>Add a new service provider</h1>
+
+<form method="post" asp-antiforgery="true">
+    <div class="form-floating mb-3">
+        <input asp-for="Input.Name" class="form-control" aria-required="true"/>
+        <label asp-for="Input.Name" class="control-label"></label>
+        <span asp-validation-for="Input.Name" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.ShortName" class="form-control" aria-required="true"/>
+        <label asp-for="Input.ShortName" class="control-label"></label>
+        <span asp-validation-for="Input.ShortName" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.Address" class="form-control" aria-required="true"/>
+        <label asp-for="Input.Address" class="control-label"></label>
+        <span asp-validation-for="Input.Address" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.CoordinatesLongitude" class="form-control" aria-required="true"/>
+        <label asp-for="Input.CoordinatesLongitude" class="control-label"></label>
+        <span asp-validation-for="Input.CoordinatesLongitude" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.CoordinatesLatitude" class="form-control" aria-required="true"/>
+        <label asp-for="Input.CoordinatesLatitude" class="control-label"></label>
+        <span asp-validation-for="Input.CoordinatesLatitude" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.WorkBeginTime" class="form-control" aria-required="true"/>
+        <label asp-for="Input.WorkBeginTime" class="control-label"></label>
+        <span asp-validation-for="Input.WorkBeginTime" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.WorkEndTime" class="form-control" aria-required="true"/>
+        <label asp-for="Input.WorkEndTime" class="control-label"></label>
+        <span asp-validation-for="Input.WorkEndTime" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Input.SelectedWorkDays">Select work days</label>
+        <select asp-for="Input.SelectedWorkDays" asp-items="DaysOfWeek.DaysOfWeekSelectList" class="form-control" multiple></select>
+        <span asp-validation-for="Input.SelectedWorkDays" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Input.Contacts" class="form-control"/>
+        <label asp-for="Input.Contacts" class="control-label"></label>
+        <span asp-validation-for="Input.Contacts" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Create" class="btn btn-primary"/>
+        <a asp-page="@Routes.ServiceProvidersIndex" class="btn btn-secondary">Back to list</a>
+    </div>
+</form>
