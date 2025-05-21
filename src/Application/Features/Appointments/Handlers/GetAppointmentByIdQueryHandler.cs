@@ -20,7 +20,7 @@ public sealed class GetAppointmentByIdQueryHandler(IApplicationDbContext applica
             return new Error("AppointmentNotFound",
                 $"Appointment with given id {request.AppointmentId} does not exist");
         }
-        
+
         return appointment;
     }
 }

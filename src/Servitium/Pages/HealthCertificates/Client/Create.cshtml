@@ -1,0 +1,23 @@
+@page
+@using Servitium.Pages
+@model Servitium.Pages.HealthCertificates.Client.Create
+@{
+    ViewData["Title"] = "Health certificate creation";
+}
+
+<h1>Create health certificate</h1>
+
+<form method="post" 
+      asp-antiforgery="true">
+    <div class="form-floating mb-3">
+        <label asp-for="Input.TemplateId" class="control-label"></label>
+        <select asp-for="Input.TemplateId" 
+                asp-items="Model.HealthCertificateSelectList" 
+                class="form-control"
+                aria-required="true"></select>
+        <span asp-validation-for="Input.TemplateId" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Create" class="btn btn-primary"/>
+    </div>
+</form>

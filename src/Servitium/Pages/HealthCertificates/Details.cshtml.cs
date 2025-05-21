@@ -33,7 +33,7 @@ public class Details(ISender sender) : PageModel
         if (getHealthCertificateByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getHealthCertificateByIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return RedirectToPage(Routes.Index);
         }
         
         var certificate = getHealthCertificateByIdQueryResponse.Value;
@@ -45,7 +45,7 @@ public class Details(ISender sender) : PageModel
         if (getHealthCertificateTemplateByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getHealthCertificateTemplateByIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return RedirectToPage(Routes.Index);
         }
         
         var template = getHealthCertificateTemplateByIdQueryResponse.Value;

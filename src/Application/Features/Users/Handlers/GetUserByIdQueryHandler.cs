@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Handlers;
 
-public sealed class GetUserQueryByIdHandler(UserManager<IdentityUser> userManager) : 
-    IRequestHandler<GetUserQueryById, Result<IdentityUser>>
+public sealed class GetUserByIdQueryHandler(UserManager<IdentityUser> userManager) : 
+    IRequestHandler<GetUserByIdQuery, Result<IdentityUser>>
 {
-    public async Task<Result<IdentityUser>> Handle(GetUserQueryById request, CancellationToken cancellationToken)
+    public async Task<Result<IdentityUser>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var user = await userManager.Users.SingleOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
 

@@ -80,7 +80,7 @@ public class GetAllPossibleAppointmentsQueryHandler(IApplicationDbContext applic
                             serviceProvider.Id ?? 0);
 
                         result.AddRange(allPossibleAtDay);
-                        
+
                         continue;
                     }
 

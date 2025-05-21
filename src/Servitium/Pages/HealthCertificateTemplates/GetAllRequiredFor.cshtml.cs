@@ -17,9 +17,20 @@ namespace Servitium.Pages.HealthCertificateTemplates;
 
 public class GetAllRequiredFor(ISender sender) : PageModel
 {
-    // TODO restructure
-    public List<(HealthCertificateTemplate Template, SelectList Services, int? SelectedServiceId)> TemplatesWithCorrespondingServices { get; set; } = [];
-    public List<(HealthCertificate Certificate, HealthCertificateTemplate Template)> CertificatesWithTheirTemplates { get; set; } = [];
+    [BindProperty] public int SelectedServiceId { get; set; }
+
+    public List<(HealthCertificateTemplate Template, SelectList Services)> TemplatesWithCorrespondingServices
+    {
+        get;
+        set;
+    } = [];
+
+    public List<(HealthCertificate Certificate, HealthCertificateTemplate Template)> CertificatesWithTheirTemplates
+    {
+        get;
+        set;
+    } = [];
+
     public List<(Appointment Appointment, Service Service)> AppointmentsWithTheirServices { get; set; } = [];
 
     public async Task<IActionResult> OnGetAsync(int id)
@@ -45,7 +56,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
         if (getClientByPersonIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getClientByPersonIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return RedirectToPage(Routes.Index);
         }
 
         var client = getClientByPersonIdQueryResponse.Value;
@@ -61,6 +72,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
         {
             ModelState.AddModelError(
                 getNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse.Error);
+            return RedirectToPage(Routes.Index);
         }
 
         var requirements =
@@ -81,11 +93,11 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                         ModelState.AddModelError(getAppointmentByIdQueryResponse.Error);
                         return LocalRedirect(Routes.Index);
                     }
-                    
+
                     var appointment = getAppointmentByIdQueryResponse.Value;
 
                     var getServiceByIdQuery = new GetServiceByIdQuery(appointment.ServiceId);
-                    
+
                     var getServiceByIdQueryResponse = await sender.Send(getServiceByIdQuery);
 
                     if (getServiceByIdQueryResponse.IsError)
@@ -93,7 +105,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                         ModelState.AddModelError(getServiceByIdQueryResponse.Error);
                         return LocalRedirect(Routes.Index);
                     }
-                    
+
                     var service = getServiceByIdQueryResponse.Value;
 
                     AppointmentsWithTheirServices.Add((appointment, service));
@@ -110,26 +122,27 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                     if (getHealthCertificateTemplateByIdQueryResponse.IsError)
                     {
                         ModelState.AddModelError(getHealthCertificateTemplateByIdQueryResponse.Error);
-                        return LocalRedirect(Routes.Index);
+                        return RedirectToPage(Routes.Index);
                     }
-                    
+
                     var template = getHealthCertificateTemplateByIdQueryResponse.Value;
 
                     var getServicesByResultTemplateIdQuery = new GetServicesByResultTemplateIdQuery(template.Id ?? 0);
-                    
-                    var getServicesByResultTemplateIdQueryResponse = await sender.Send(getServicesByResultTemplateIdQuery);
+
+                    var getServicesByResultTemplateIdQueryResponse =
+                        await sender.Send(getServicesByResultTemplateIdQuery);
 
                     if (getServicesByResultTemplateIdQueryResponse.IsError)
                     {
                         ModelState.AddModelError(getServicesByResultTemplateIdQueryResponse.Error);
-                        return LocalRedirect(Routes.Index);
+                        return RedirectToPage(Routes.Index);
                     }
-                    
+
                     var services = getServicesByResultTemplateIdQueryResponse.Value;
-                    
+
                     var selectList = new SelectList(services, "Id", "Name");
 
-                    TemplatesWithCorrespondingServices.Add((template, selectList,  null));
+                    TemplatesWithCorrespondingServices.Add((template, selectList));
 
                     break;
                 }
@@ -146,7 +159,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                     {
                         ModelState.AddModelError(
                             getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse.Error);
-                        return LocalRedirect(Routes.Index);
+                        return RedirectToPage(Routes.Index);
                     }
 
                     var certificate = getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse
@@ -161,7 +174,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                     if (getHealthCertificateTemplateByIdQueryResponse.IsError)
                     {
                         ModelState.AddModelError(getHealthCertificateTemplateByIdQueryResponse.Error);
-                        return LocalRedirect(Routes.Index);
+                        return RedirectToPage(Routes.Index);
                     }
 
                     var template = getHealthCertificateTemplateByIdQueryResponse.Value;
@@ -171,11 +184,68 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                     break;
                 }
                 default:
-
-                    return LocalRedirect(Routes.Index);
+                    return RedirectToPage(Routes.Index);
             }
         }
 
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (SelectedServiceId == 0)
+        {
+            return RedirectToPage(Routes.Index);
+        }
+        
+        var userId = User.GetUserId();
+
+        var getPersonByUserIdQuery = new GetPersonByUserIdQuery(userId);
+
+        var getPersonByUserIdQueryResponse = await sender.Send(getPersonByUserIdQuery);
+
+        if (getPersonByUserIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(getPersonByUserIdQueryResponse.Error);
+            return LocalRedirect(Routes.Index);
+        }
+
+        var person = getPersonByUserIdQueryResponse.Value;
+
+        var getClientByPersonIdQuery = new GetClientByPersonIdQuery(person.Id ?? 0);
+
+        var getClientByPersonIdQueryResponse = await sender.Send(getClientByPersonIdQuery);
+
+        if (getClientByPersonIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(getClientByPersonIdQueryResponse.Error);
+            return RedirectToPage(Routes.Index);
+        }
+
+        var client = getClientByPersonIdQueryResponse.Value;
+
+        var checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery =
+            new CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery(
+                client.Id ?? 0,
+                SelectedServiceId);
+
+        var checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse =
+            await sender.Send(checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery);
+
+        if (checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse
+                .Error);
+            return RedirectToPage(Routes.Index);
+        }
+
+        var checkingResponse = checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.Value;
+
+        if (!checkingResponse.CanCreate)
+        {
+            return RedirectToPage();
+        }
+        
+        return RedirectToPage(Routes.AppointmentCreate, new {id = SelectedServiceId, dateFrom = checkingResponse.MinDateTime});
     }
 }

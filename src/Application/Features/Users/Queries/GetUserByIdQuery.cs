@@ -6,4 +6,4 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Application.Features.Users.Queries;
 
-public sealed record GetUserQueryById(string Id) : IRequest<Result<IdentityUser>>;
+public sealed record GetUserByIdQuery(string Id) : IRequest<Result<IdentityUser>>;

@@ -32,18 +32,13 @@ public sealed class CreateHealthCertificateCommandHandler(IApplicationDbContext 
 
         var healthCertificate = new HealthCertificate
         {
-            Name = template.Name,
             Description = request.Description,
             ReceivingTime = DateOnly.FromDateTime(DateTime.Now),
-            ActivePeriod = template.ActivePeriod,
-            TemplateId = request.TemplateId
+            TemplateId = request.TemplateId,
+            ClientId = request.ClientId,
         };
 
         await applicationDbContext.HealthCertificates.AddAsync(healthCertificate, cancellationToken);
-
-        await applicationDbContext.SaveChangesAsync(cancellationToken);
-
-        client.ServiceResultsIds.Add(healthCertificate.Id ?? 0);
 
         await applicationDbContext.SaveChangesAsync(cancellationToken);
 

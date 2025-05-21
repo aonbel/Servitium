@@ -7,10 +7,13 @@ using MediatR;
 
 namespace Application.Features.HealthСertificatates.Handlers;
 
-public sealed class GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery, Result<HealthCertificate>>
+public sealed class GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryHandler(
+    IApplicationDbContext applicationDbContext)
+    : IRequestHandler<GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery,
+        Result<HealthCertificate>>
 {
-    public async Task<Result<HealthCertificate>> Handle(GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery request,
+    public async Task<Result<HealthCertificate>> Handle(
+        GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery request,
         CancellationToken cancellationToken)
     {
         var client = await applicationDbContext.Clients.FindAsync([request.ClientId], cancellationToken);
@@ -20,19 +23,17 @@ public sealed class GetLatestHealthCertificateByClientIdAndHealthCertificateTemp
             return ClientErrors.NotFoundById(request.ClientId);
         }
 
-        foreach (var serviceResultsId in client.ServiceResultsIds)
-        {
-            var healthCertificate =
-                (await applicationDbContext.HealthCertificates.FindAsync([serviceResultsId], cancellationToken))!;
+        var healthCertificate = applicationDbContext.HealthCertificates
+            .Where(c => c.ClientId == request.ClientId && c.TemplateId == request.HealthCertificateTemplateId)
+            .MaxBy(c => c.ReceivingTime);
 
-            if (healthCertificate.TemplateId == request.HealthCertificateTemplateId)
-            {
-                return healthCertificate;
-            }
+        if (healthCertificate is null)
+        {
+            return HealthCertificateErrors.NotFoundByTemplateIdAmongHealthCertificatesOfClient(
+                request.ClientId,
+                request.HealthCertificateTemplateId);
         }
 
-        return HealthCertificateErrors.NotFoundByTemplateIdAmongHealthCertificatesOfClient(
-            request.ClientId,
-            request.HealthCertificateTemplateId);
+        return healthCertificate;
     }
 }

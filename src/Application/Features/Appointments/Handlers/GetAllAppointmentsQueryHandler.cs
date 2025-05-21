@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Appointments.Handlers;
 
-public class GetAllAppointmentsQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetAllAppointmentsQuery, Result<ICollection<Appointment>>>
+public class GetAllAppointmentsQueryHandler(IApplicationDbContext applicationDbContext)
+    : IRequestHandler<GetAllAppointmentsQuery, Result<ICollection<Appointment>>>
 {
-    public async Task<Result<ICollection<Appointment>>> Handle(GetAllAppointmentsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ICollection<Appointment>>> Handle(GetAllAppointmentsQuery request,
+        CancellationToken cancellationToken)
     {
         var appointments = await applicationDbContext.Appointments.ToListAsync(cancellationToken);
-        
+
         return appointments;
     }
 }

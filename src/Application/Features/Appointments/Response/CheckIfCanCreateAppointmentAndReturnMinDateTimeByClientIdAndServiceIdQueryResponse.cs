@@ -1,0 +1,3 @@
+namespace Application.Features.Appointments.Response;
+
+public record CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse(bool CanCreate, DateTime? MinDateTime);

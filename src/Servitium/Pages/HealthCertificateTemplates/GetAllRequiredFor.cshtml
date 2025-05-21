@@ -6,7 +6,7 @@
     ViewData["Title"] = "Services required";
 }
 
-<h1 xmlns="http://www.w3.org/1999/html">Already owned health certificates</h1>
+<h3 xmlns="http://www.w3.org/1999/html">Already owned health certificates</h3>
 
 <table class="table table-striped table-hover">
     <thead>
@@ -41,7 +41,7 @@
     </tbody>
 </table>
 
-<h1 xmlns="http://www.w3.org/1999/html">Already existing appointments</h1>
+<h3 xmlns="http://www.w3.org/1999/html">Already existing appointments</h3>
 
 <table class="table table-striped table-hover">
     <thead>
@@ -76,14 +76,13 @@
     </tbody>
 </table>
 
-<h1 xmlns="http://www.w3.org/1999/html">Health certificate templates without existing appointments</h1>
+<h3 xmlns="http://www.w3.org/1999/html">Health certificate templates without existing appointments</h3>
 
 <table class="table table-striped table-hover">
     <thead>
     <tr>
         <th>Health certificate template name</th>
         <th>Possible services to resolve template</th>
-        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -92,13 +91,10 @@
         <tr>
             <td>@templateWithCorrespondingServices.Template.Name</td>
             <td>
-                <form method="get"
-                      asp-antiforgery="true" 
-                      asp-page="@Routes.AppointmentCreate"
-                      asp-route-id="@templateWithCorrespondingServices.SelectedServiceId"
-                      asp-route-dateFrom="@DateTime.Now">
-                    <select asp-for="@templateWithCorrespondingServices.SelectedServiceId"
-                            asp-items="@templateWithCorrespondingServices.Services" 
+                <form method="post"
+                      asp-antiforgery="true">
+                    <select name="SelectedServiceId"
+                            asp-items="@templateWithCorrespondingServices.Services"
                             class="form-select form-select-sm">
                         <option value="">Select a service</option>
                     </select>

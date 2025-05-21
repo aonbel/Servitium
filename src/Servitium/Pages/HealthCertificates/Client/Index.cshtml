@@ -1,0 +1,43 @@
+@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Servitium.Pages
+@model Servitium.Pages.HealthCertificates.Client.Index
+
+<a asp-page="@Routes.HealthCertificateClientCreate" class="btn btn-warning btn-sm" title="Create">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    </svg>
+</a>
+
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var healthCertificateWithTemplate in Model.Data)
+    {
+        <tr>
+            <td>@healthCertificateWithTemplate.HealthCertificateTemplate.Name</td>
+            <td>@healthCertificateWithTemplate.HealthCertificate.ReceivingTime</td>
+            <td>
+                <a asp-page="@Routes.HealthCertificateDetails"
+                   asp-route-id="@healthCertificateWithTemplate.HealthCertificate.Id" 
+                   class="btn btn-info btn-sm"
+                   title="Details">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye"
+                         viewBox="0 0 16 16">
+                        <title>View details</title>
+                        <path
+                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM8 13c-2.5 0-4.5-2-4.5-4.5S5.5 4 8 4s4.5 2 4.5 4.5S10.5 13 8 13z"/>
+                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/>
+                    </svg>
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

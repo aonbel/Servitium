@@ -12,7 +12,7 @@ public class Index(ISender sender) : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        var getAllHealthCertificateTemplates = new GetAllHealthCertificateTemplates();
+        var getAllHealthCertificateTemplates = new GetAllHealthCertificateTemplatesQuery();
 
         var getAllHealthCertificateTemplatesResponse = await sender.Send(getAllHealthCertificateTemplates);
 
