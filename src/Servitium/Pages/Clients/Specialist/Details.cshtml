@@ -1,0 +1,31 @@
+@page "{id:int}"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Servitium.Pages
+@model Servitium.Pages.Clients.Specialist.Details
+
+<form method="get">
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.FirstName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.FirstName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.LastName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.LastName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.MiddleName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.MiddleName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.PhoneNumber" class="form-control" readonly/>
+        <label asp-for="@Model.Data.PhoneNumber" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.Gender" class="form-control" readonly/>
+        <label asp-for="@Model.Data.Gender" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.BirthDate" class="form-control" readonly/>
+        <label asp-for="@Model.Data.BirthDate" class="control-label"></label>
+    </div>
+</form>

@@ -25,7 +25,6 @@ public class Details(ISender sender) : PageModel
         public string ShortName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
-        public string Coordinates { get; set; } = string.Empty;
         public string WorkTime { get; set; } = string.Empty;
         public ICollection<DayOfWeek> WorkDays { get; set; } = []; 
         public string Contacts { get; set; } = string.Empty;
@@ -49,7 +48,6 @@ public class Details(ISender sender) : PageModel
             ShortName = serviceProvider.ShortName,
             FullName = serviceProvider.Name,
             Address = serviceProvider.Address,
-            Coordinates = serviceProvider.Coordinates.ToString(),
             WorkTime = serviceProvider.WorkTime.ToString(),
             WorkDays = serviceProvider.WorkDays,
             Contacts = string.Join(',', serviceProvider.Contacts.ToArray()),

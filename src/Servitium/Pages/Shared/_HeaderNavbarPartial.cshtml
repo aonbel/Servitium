@@ -1,12 +1,9 @@
-@using Application.Features.Persons.Queries
 @using Infrastructure.Authentification
 @using Infrastructure.Authorization
-@using MediatR
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Servitium.Infrastructure
 @using Servitium.Pages
 @inject RoleSelectionService RoleSelectionService
-@inject ISender Sender
 @{
     var selectedRole = await RoleSelectionService.GetSelectedRole();
 }
@@ -39,10 +36,13 @@
             </li>
             break;
         case ApplicationRoles.Specialist:
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-page="@Routes.AppointmentSpecialistIndex">Appointments</a>
+            </li>
             break;
         case ApplicationRoles.Client:
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-page="@Routes.AppointmentsIndex">Appointments</a>
+                <a class="nav-link text-dark" asp-page="@Routes.AppointmentsClientIndex">Appointments</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-page="@Routes.HealthCertificatesClientIndex">Health certificates</a>

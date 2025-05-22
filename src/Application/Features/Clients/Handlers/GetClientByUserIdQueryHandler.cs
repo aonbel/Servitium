@@ -3,24 +3,30 @@ using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
 using Domain.Entities.People;
 using Domain.Interfaces;
-using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Clients.Handlers;
 
-public class GetClientByPersonIdQueryHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetClientByPersonIdQuery, Result<Client>>
+public class GetClientByUserIdQueryHandler(IApplicationDbContext applicationDbContext) :
+    IRequestHandler<GetClientByUserIdQuery, Result<Client>>
 {
-    public async Task<Result<Client>> Handle(GetClientByPersonIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Client>> Handle(GetClientByUserIdQuery request, CancellationToken cancellationToken)
     {
+        var person =
+            await applicationDbContext.Persons.SingleOrDefaultAsync(p => p.UserId == request.UserId, cancellationToken);
+
+        if (person is null)
+        {
+            return PersonErrors.NotFoundByUserId(request.UserId);
+        }
+
         var client =
-            await applicationDbContext.Clients.FirstOrDefaultAsync(client => client.PersonId == request.PersonId,
-                cancellationToken);
+            await applicationDbContext.Clients.SingleOrDefaultAsync(c => c.PersonId == person.Id, cancellationToken);
 
         if (client is null)
         {
-            return ClientErrors.NotFoundByPersonId(request.PersonId);
+            return ClientErrors.NotFoundByPersonId(person.Id ?? 0);
         }
         
         return client;

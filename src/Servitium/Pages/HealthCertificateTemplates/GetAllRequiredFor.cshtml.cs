@@ -191,61 +191,13 @@ public class GetAllRequiredFor(ISender sender) : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public IActionResult OnPostAsync()
     {
         if (SelectedServiceId == 0)
         {
             return RedirectToPage(Routes.Index);
         }
         
-        var userId = User.GetUserId();
-
-        var getPersonByUserIdQuery = new GetPersonByUserIdQuery(userId);
-
-        var getPersonByUserIdQueryResponse = await sender.Send(getPersonByUserIdQuery);
-
-        if (getPersonByUserIdQueryResponse.IsError)
-        {
-            ModelState.AddModelError(getPersonByUserIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
-        }
-
-        var person = getPersonByUserIdQueryResponse.Value;
-
-        var getClientByPersonIdQuery = new GetClientByPersonIdQuery(person.Id ?? 0);
-
-        var getClientByPersonIdQueryResponse = await sender.Send(getClientByPersonIdQuery);
-
-        if (getClientByPersonIdQueryResponse.IsError)
-        {
-            ModelState.AddModelError(getClientByPersonIdQueryResponse.Error);
-            return RedirectToPage(Routes.Index);
-        }
-
-        var client = getClientByPersonIdQueryResponse.Value;
-
-        var checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery =
-            new CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery(
-                client.Id ?? 0,
-                SelectedServiceId);
-
-        var checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse =
-            await sender.Send(checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery);
-
-        if (checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.IsError)
-        {
-            ModelState.AddModelError(checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse
-                .Error);
-            return RedirectToPage(Routes.Index);
-        }
-
-        var checkingResponse = checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.Value;
-
-        if (!checkingResponse.CanCreate)
-        {
-            return RedirectToPage();
-        }
-        
-        return RedirectToPage(Routes.AppointmentCreate, new {id = SelectedServiceId, dateFrom = checkingResponse.MinDateTime});
+        return RedirectToPage(Routes.AppointmentClientCreate, new {serviceId = SelectedServiceId});
     }
 }

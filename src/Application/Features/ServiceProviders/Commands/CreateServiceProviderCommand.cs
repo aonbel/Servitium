@@ -9,7 +9,6 @@ public sealed record CreateServiceProviderCommand(
     string Name,
     string ShortName,
     string Address,
-    Coordinates Coordinates,
     TimeOnlySegment WorkTime,
     ICollection<DayOfWeek> WorkDays,
     ICollection<string> Contacts

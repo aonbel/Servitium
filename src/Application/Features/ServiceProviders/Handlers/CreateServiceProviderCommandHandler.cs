@@ -18,7 +18,6 @@ public sealed class CreateServiceProviderCommandHandler(IApplicationDbContext ap
             Name = request.Name,
             ShortName = request.ShortName,
             Address = request.Address,
-            Coordinates = request.Coordinates,
             Contacts = request.Contacts,
             WorkTime = request.WorkTime,
             WorkDays = request.WorkDays

@@ -13,11 +13,5 @@ public class ServiceProviderConfiguration : IEntityTypeConfiguration<ServiceProv
             nb.Property(p => p.Begin).HasColumnType("time");    
             nb.Property(p => p.End).HasColumnType("time");
         });
-
-        builder.OwnsOne(s => s.Coordinates, nb =>
-        {
-            nb.Property(p => p.Longitude).HasColumnType("decimal(18, 4)");
-            nb.Property(p => p.Latitude).HasColumnType("decimal(18, 4)");
-        });
     }
 }

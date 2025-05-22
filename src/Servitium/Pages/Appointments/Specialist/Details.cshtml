@@ -1,0 +1,31 @@
+@page "{appointmentId:int}"
+@using Servitium.Pages
+@model Servitium.Pages.Appointments.Specialist.Details
+
+<form method="get">
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.AppointmentDate" class="form-control" readonly/>
+        <label asp-for="@Model.Data.AppointmentDate" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.AppointmentTime" class="form-control" readonly/>
+        <label asp-for="@Model.Data.AppointmentTime" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.ServiceName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.ServiceName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.ClientName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.ClientName" class="control-label"></label>
+    </div>
+    <div class="form-group mt-3">
+        <a asp-page="@Routes.ClientSpecialistDetails" 
+           asp-route-id="@Model.ClientId" 
+           class="btn btn-secondary">Get client details</a>
+        <a asp-page="@Routes.HealthCertificatesSpecialistIndex"
+           asp-route-serviceId="@Model.ServiceId"
+           asp-route-clientId="@Model.ClientId"
+           class="btn btn-secondary">Get client health certificates</a>
+    </div>
+</form>

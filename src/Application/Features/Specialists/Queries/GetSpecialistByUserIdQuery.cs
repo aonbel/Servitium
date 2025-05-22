@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Application.Features.Specialists.Queries;
 
-public sealed record GetSpecialistsByServiceProviderIdQuery(int ServiceProviderId) : IRequest<Result<ICollection<Specialist>>>;
+public record GetSpecialistByUserIdQuery(string UserId) : IRequest<Result<Specialist>>;

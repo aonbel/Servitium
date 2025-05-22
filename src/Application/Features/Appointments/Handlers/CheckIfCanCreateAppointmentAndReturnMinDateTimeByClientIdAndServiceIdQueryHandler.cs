@@ -11,11 +11,13 @@ namespace Application.Features.Appointments.Handlers;
 
 public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryHandler(
     IApplicationDbContext applicationDbContext)
-    : IRequestHandler<CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery, Result<CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse>>
+    : IRequestHandler<CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery,
+        Result<CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse>>
 {
-    public async Task<Result<CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse>> Handle(
-        CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery request,
-        CancellationToken cancellationToken)
+    public async Task<Result<CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse>>
+        Handle(
+            CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery request,
+            CancellationToken cancellationToken)
     {
         var client = await applicationDbContext.Clients.FindAsync([request.ClientId], cancellationToken);
 
@@ -33,7 +35,8 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
 
         var healthCertificates = applicationDbContext.HealthCertificates.Where(c => c.ClientId == request.ClientId);
 
-        var appointments = applicationDbContext.Appointments.Where(c => c.ClientId == request.ClientId);
+        var appointments = await applicationDbContext.Appointments.Where(c => c.ClientId == request.ClientId)
+            .ToListAsync(cancellationToken);
 
         List<(Service Service, Appointment Appointment)> servicesFromAppointments = [];
 
@@ -73,13 +76,14 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
                 {
                     minDateTime = minDateTimeForCurrentAppointment;
                 }
-                
+
                 continue;
             }
 
             return new CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse(false, null);
         }
 
-        return new CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse(true, minDateTime);
+        return new CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse(true,
+            minDateTime);
     }
 }

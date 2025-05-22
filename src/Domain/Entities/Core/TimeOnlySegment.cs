@@ -30,6 +30,11 @@ public sealed class TimeOnlySegment
         return Begin <= other.Begin && other.End <= End;
     }
 
+    public bool Contains(TimeOnly time)
+    {
+        return time >= Begin && time <= End;
+    }
+
     public override string ToString()
     {
         return Begin + "-" + End;

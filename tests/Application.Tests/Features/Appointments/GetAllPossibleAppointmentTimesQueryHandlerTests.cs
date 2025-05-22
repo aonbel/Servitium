@@ -18,7 +18,6 @@ namespace Application.Tests.Features.Appointments
         private readonly DateTime _fromDate = new (2024, 6, 1, 8, 0, 0);
         private readonly TimeSpan _timeSpan = TimeSpan.FromDays(1);
         private readonly double _distance = 10.0;
-        private readonly Coordinates _fromCoordinates = new Coordinates { Latitude = 0, Longitude = 0 };
         private readonly CancellationToken _cancellationToken = CancellationToken.None;
         
         private readonly Mock<IApplicationDbContext> _mockDbContext = new();
@@ -49,7 +48,6 @@ namespace Application.Tests.Features.Appointments
                 Name = "Test Provider",
                 ShortName = "TP",
                 Address = "Test Address",
-                Coordinates = new Coordinates { Latitude = 0, Longitude = 0 },
                 WorkTime = new TimeOnlySegment(new TimeOnly(8, 0), new TimeOnly(12, 0)),
                 WorkDays = new List<DayOfWeek> { _fromDate.DayOfWeek },
                 Contacts = new List<string>()

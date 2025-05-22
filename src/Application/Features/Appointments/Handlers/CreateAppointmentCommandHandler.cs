@@ -22,11 +22,13 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext applic
         {
             return SpecialistErrors.NotFoundById(request.SpecialistId);
         }
-
-        var isTimeFreeFromAppointments = await applicationDbContext.Appointments
+        
+        // TODO Optimize
+        
+        var isTimeFreeFromAppointments = applicationDbContext.Appointments
             .Where(a => a.SpecialistId == request.SpecialistId)
-            .AllAsync(a => a.Date != request.Date || !request.TimeSegment.IsIntersecting(a.TimeSegment),
-                cancellationToken);
+            .AsEnumerable()
+            .All(a => a.Date != request.Date || !request.TimeSegment.IsIntersecting(a.TimeSegment));
 
         if (!isTimeFreeFromAppointments)
         {

@@ -1,0 +1,32 @@
+@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Servitium.Pages
+@model Servitium.Pages.Appointments.Specialist.Index
+
+<h1 xmlns="http://www.w3.org/1999/html">Your appointments</h1>
+
+@if (Model.CurrentAppointmentId is not null)
+{
+    <a asp-page="@Routes.AppointmentSpecialistDetails" asp-route-appointmentId="@Model.CurrentAppointmentId"
+       class="btn btn-warning btn-sm" title="Inspect current">
+        <label>Inspect current</label>
+    </a>
+}
+
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <th>Service name</th>
+        <th>Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var dataInstance in Model.Data)
+    {
+        <tr>
+            <td>@dataInstance.service.ShortName</td>
+            <td>@dataInstance.appointment.TimeSegment</td>
+        </tr>
+    }
+    </tbody>
+</table>

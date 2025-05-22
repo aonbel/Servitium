@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Specialists.Handlers;
 
-public class GetSpecialistsByServiceProviderIdQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetSpecialistsByServiceProviderIdQuery, Result<ICollection<Specialist>>>
+public sealed class GetSpecialistsByServiceProviderIdQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetSpecialistsByServiceProviderIdQuery, Result<ICollection<Specialist>>>
 {
     public async Task<Result<ICollection<Specialist>>> Handle(GetSpecialistsByServiceProviderIdQuery request, CancellationToken cancellationToken)
     {

@@ -1,5 +1,5 @@
-@page "{id:int}/{dateFrom}"
-@model Servitium.Pages.Appointments.Create
+@page "{serviceId:int}"
+@model Servitium.Pages.Appointments.Client.Create
 @{
     ViewData["Title"] = "Appointment creation";
 }
@@ -142,7 +142,7 @@
                     .then(responseData => {
                         responseData.value.forEach(timeSegment => {
                             const option = document.createElement('option');
-                            option.value = timeSegment;
+                            option.text = `${timeSegment.begin}-${timeSegment.end}`;
                             option.text = `${timeSegment.begin}-${timeSegment.end}`;
                             timeSegmentSelect.appendChild(option);
                         });

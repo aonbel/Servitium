@@ -35,16 +35,6 @@ public class Create(ISender sender) : PageModel
         public string Address { get; set; } = string.Empty;
 
         [Required]
-        [Range(-180.0, 180.0, ErrorMessage = "Longitude must be between -180 and 180")]
-        [Display(Name = "Coordinates longitude")]
-        public double CoordinatesLongitude { get; set; }
-
-        [Required]
-        [Range(-90.0, 90.0, ErrorMessage = "Latitude must be between -90 and 90")]
-        [Display(Name = "Coordinates latitude")]
-        public double CoordinatesLatitude { get; set; }
-
-        [Required]
         [DataType(DataType.Time)]
         [Display(Name = "Work start time")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
@@ -66,7 +56,6 @@ public class Create(ISender sender) : PageModel
     public async Task<IActionResult> OnPostAsync()
     {
         var command = new CreateServiceProviderCommand(Input.Name, Input.ShortName, Input.Address,
-            new Coordinates { Longitude = Input.CoordinatesLongitude, Latitude = Input.CoordinatesLatitude },
             new TimeOnlySegment(Input.WorkBeginTime, Input.WorkEndTime),
             Input.SelectedWorkDays,
             Input.Contacts.Split(',')

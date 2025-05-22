@@ -4,6 +4,7 @@ using Domain.Abstractions.Result.Errors;
 using Domain.Entities.Services;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.HealthСertificatates.Handlers;
 
@@ -23,9 +24,10 @@ public sealed class GetLatestHealthCertificateByClientIdAndHealthCertificateTemp
             return ClientErrors.NotFoundById(request.ClientId);
         }
 
-        var healthCertificate = applicationDbContext.HealthCertificates
+        var healthCertificate = await applicationDbContext.HealthCertificates
             .Where(c => c.ClientId == request.ClientId && c.TemplateId == request.HealthCertificateTemplateId)
-            .MaxBy(c => c.ReceivingTime);
+            .OrderByDescending(c => c.ReceivingTime)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (healthCertificate is null)
         {
