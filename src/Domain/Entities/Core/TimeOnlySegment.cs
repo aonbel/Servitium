@@ -5,13 +5,17 @@ public sealed class TimeOnlySegment
     public TimeOnly Begin { get; init; }
     public TimeOnly End { get; init; }
 
+    public TimeOnlySegment()
+    {
+    }
+
     public TimeOnlySegment(TimeOnly begin, TimeOnly end)
     {
         if (begin > end)
         {
-            throw new ArgumentException("The begin time cannot be greater than the end time."); 
+            throw new ArgumentException("The begin time cannot be greater than the end time.");
         }
-        
+
         Begin = begin;
         End = end;
     }

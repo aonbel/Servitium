@@ -10,7 +10,7 @@ using Moq;
 
 namespace Application.Tests.Features.Appointments
 {
-    public class GetAllPossibleAppointmentsQueryHandlerTests
+    public class GetAllPossibleAppointmentTimesQueryHandlerTests
     {
         private readonly int _serviceId = 1;
         private readonly int _nonExistingServiceId = 2;
@@ -28,7 +28,7 @@ namespace Application.Tests.Features.Appointments
         private readonly Specialist _specialist;
         private readonly Appointment _appointment;
 
-        public GetAllPossibleAppointmentsQueryHandlerTests()
+        public GetAllPossibleAppointmentTimesQueryHandlerTests()
         {
             _service = new Service
             {
@@ -95,7 +95,7 @@ namespace Application.Tests.Features.Appointments
             _mockDbContext.Setup(db => db.Appointments)
                 .Returns(MockDbSet(new List<Appointment>()));
 
-            var handler = new GetAllPossibleAppointmentsQueryHandler(_mockDbContext.Object);
+            var handler = new GetAllPossibleAppointmentTimesQueryHandler(_mockDbContext.Object);
 
             var request = new GetAllPossibleAppointmentTimesQuery(
                 _serviceId,
@@ -131,7 +131,7 @@ namespace Application.Tests.Features.Appointments
             _mockDbContext.Setup(db => db.Services.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((Service?)null);
 
-            var handler = new GetAllPossibleAppointmentsQueryHandler(_mockDbContext.Object);
+            var handler = new GetAllPossibleAppointmentTimesQueryHandler(_mockDbContext.Object);
 
             var request = new GetAllPossibleAppointmentTimesQuery(
                 _nonExistingServiceId,
@@ -165,7 +165,7 @@ namespace Application.Tests.Features.Appointments
             _mockDbContext.Setup(db => db.Appointments)
                 .Returns(MockDbSet(new List<Appointment> { _appointment }));
 
-            var handler = new GetAllPossibleAppointmentsQueryHandler(_mockDbContext.Object);
+            var handler = new GetAllPossibleAppointmentTimesQueryHandler(_mockDbContext.Object);
 
             var request = new GetAllPossibleAppointmentTimesQuery(
                 _serviceId,

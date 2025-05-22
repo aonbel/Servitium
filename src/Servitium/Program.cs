@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Servitium;
 using Servitium.Infrastructure;
 using Serilog;
+using Servitium.Extensions;
 using Servitium.Middleware;
 using Servitium.Pages;
 
@@ -21,6 +22,8 @@ builder.Services
     .AddRazorPages();
 
 var app = builder.Build();
+
+app.MapEndpoints();
 
 app.UseSerilogRequestLogging();
 

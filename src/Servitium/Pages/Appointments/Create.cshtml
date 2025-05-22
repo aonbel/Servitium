@@ -1,2 +1,153 @@
 @page "{id:int}/{dateFrom}"
 @model Servitium.Pages.Appointments.Create
+@{
+    ViewData["Title"] = "Appointment creation";
+}
+
+<h1>Appointment creation</h1>
+
+<form method="post" asp-antiforgery="true">
+    <div class="form-floating mb-3">
+        <select asp-for="Input.SelectedDate"
+                asp-items="Model.DaysSelectList"
+                class="form-control"
+                aria-required="true"
+                onchange="loadServiceProviders()">
+            <option value="">Select date</option>
+        </select>
+        <label asp-for="Input.SelectedDate" class="control-label"></label>
+        <span asp-validation-for="Input.SelectedDate" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <select disabled asp-for="Input.SelectedServiceProviderId"
+                class="form-control"
+                aria-required="true"
+                onchange="loadSpecialists()">
+            <option value="">Select service provider</option>
+        </select>
+        <label asp-for="Input.SelectedServiceProviderId" class="control-label"></label>
+        <span asp-validation-for="Input.SelectedServiceProviderId" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <select disabled asp-for="Input.SelectedSpecialistId"
+                class="form-control"
+                aria-required="true"
+                onchange="loadTimeSegments()">
+            <option value="">Select specialist</option>
+        </select>
+        <label asp-for="Input.SelectedSpecialistId" class="control-label"></label>
+        <span asp-validation-for="Input.SelectedSpecialistId" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <select disabled asp-for="Input.SelectedTimeOnlySegment"
+                class="form-control"
+                aria-required="true">
+            <option value="">Select date</option>
+        </select>
+        <label asp-for="Input.SelectedTimeOnlySegment" class="control-label"></label>
+        <span asp-validation-for="Input.SelectedTimeOnlySegment" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Create" class="btn btn-primary"/>
+    </div>
+</form>
+
+@section Scripts
+{
+    <script>
+        function loadServiceProviders() {
+            const selectedDate = document.getElementById('Input_SelectedDate').value;
+            const [month, day, year] = selectedDate.split('/');
+            const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+            const serviceProviderSelect = document.getElementById('Input_SelectedServiceProviderId');
+            const specialistSelect = document.getElementById('Input_SelectedSpecialistId');
+            const timeSegmentSelect = document.getElementById('Input_SelectedTimeOnlySegment');
+            
+
+            const serviceId = @Model.ServiceId;
+
+            serviceProviderSelect.disabled = false;
+            serviceProviderSelect.innerHTML = '<option value="">Select service provider</option>';
+            specialistSelect.disabled = true;
+            timeSegmentSelect.disabled = true;
+
+            if (selectedDate) {
+                fetch(`/api/ServiceProviders/CanProvideService/${serviceId}/At/${isoDate}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.value.forEach(serviceProvider => {
+                            const option = document.createElement('option');
+                            option.value = serviceProvider.id;
+                            option.text = serviceProvider.shortName;
+                            serviceProviderSelect.appendChild(option);
+                        });
+                    });
+            }
+        }
+
+        function loadSpecialists() {
+            const selectedDate = document.getElementById('Input_SelectedDate').value;
+            const [month, day, year] = selectedDate.split('/');
+            const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+            const selectedServiceProviderId = document.getElementById('Input_SelectedServiceProviderId').value;
+
+            const specialistSelect = document.getElementById('Input_SelectedSpecialistId');
+            const timeSegmentSelect = document.getElementById('Input_SelectedTimeOnlySegment');
+
+            const serviceId = @Model.ServiceId;
+
+            specialistSelect.disabled = false;
+            specialistSelect.innerHTML = '<option value="">Select specialist</option>';
+            timeSegmentSelect.disabled = true;
+
+            if (selectedDate) {
+                fetch(`/api/Specialists/FromServiceProvider/${selectedServiceProviderId}/CanProvideService/${serviceId}/At/${isoDate}`)
+                    .then(specialistResponse => specialistResponse.json())
+                    .then(specialistData => {
+                        specialistData.value.forEach(specialist => {
+                            fetch(`/api/Person/GetById/${specialist.personId}`)
+                                .then(personResponse => personResponse.json())
+                                .then(personData => {
+                                    const person = personData.value;
+
+                                    const option = document.createElement('option');
+                                    option.value = specialist.id;
+                                    option.text = `${person.lastName} ${person.firstName}`;
+                                    specialistSelect.appendChild(option);
+                                });
+                        });
+                    });
+            }
+        }
+
+        function loadTimeSegments() {
+            const selectedDate = document.getElementById('Input_SelectedDate').value;
+            const [month, day, year] = selectedDate.split('/');
+            const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+            const selectedSpecialistId = document.getElementById('Input_SelectedSpecialistId').value;
+
+            const timeSegmentSelect = document.getElementById('Input_SelectedTimeOnlySegment');
+
+            const serviceId = @Model.ServiceId;
+
+            timeSegmentSelect.disabled = false;
+            timeSegmentSelect.innerHTML = '<option value="">Select time segment</option>';
+
+            if (selectedDate) {
+                fetch(`/api/Appointments/GetAllFreeTimeSegmentsBySpecialistId/${selectedSpecialistId}/ToProvideService/${serviceId}/At/${isoDate}`)
+                    .then(response => response.json())
+                    .then(responseData => {
+                        responseData.value.forEach(timeSegment => {
+                            const option = document.createElement('option');
+                            option.value = timeSegment;
+                            option.text = `${timeSegment.begin}-${timeSegment.end}`;
+                            timeSegmentSelect.appendChild(option);
+                        });
+                    });
+            }
+        }
+    </script>
+}
