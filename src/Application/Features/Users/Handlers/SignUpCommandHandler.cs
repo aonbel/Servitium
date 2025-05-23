@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Application.Features.Users.Commands;
 using Application.Features.Users.Responces;
 using Domain.Abstractions.RefreshToken;
@@ -6,23 +7,23 @@ using Domain.Abstractions.Result.Errors;
 using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using Infrastructure.Options.Authentication;
+using Infrastructure.Serialization;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SerializationPlugin.Serializers;
 
 namespace Application.Features.Users.Handlers;
 
 public sealed class SignUpCommandHandler(
-    UserManager<IdentityUser> userManager, 
+    UserManager<IdentityUser> userManager,
     IApplicationDbContext applicationDbContext,
     ITokenProvider tokenProvider,
     RoleManager<IdentityRole> roleManager,
     IOptions<AuthenticationOptions> authenticationOptions,
     ILogger<SignUpCommandHandler> logger,
-    JsonSerializer jsonSerializer)
+    SerializationService serializationService)
     : IRequestHandler<SignUpCommand, Result<SignUpCommandResponce>>
 {
     public async Task<Result<SignUpCommandResponce>> Handle(SignUpCommand request, CancellationToken cancellationToken)
@@ -38,13 +39,13 @@ public sealed class SignUpCommandHandler(
         {
             return UserErrors.RolesNumberShouldBeAtLeastOne();
         }
-        
+
         var user = new IdentityUser
         {
             UserName = request.Username,
             PasswordHash = request.Password
         };
-        
+
         await userManager.CreateAsync(user);
 
         foreach (var role in request.Roles)
@@ -54,10 +55,10 @@ public sealed class SignUpCommandHandler(
             {
                 return RoleErrors.NotFoundByName(role);
             }
-            
+
             await userManager.AddToRoleAsync(user, role);
         }
-        
+
         var accessToken = await tokenProvider.GenerateAccessToken(user);
         var refreshToken = new RefreshToken
         {
@@ -65,12 +66,12 @@ public sealed class SignUpCommandHandler(
             ExpiresOn = DateTime.UtcNow.AddDays(authenticationOptions.Value.RefreshTokenExpirationInDays),
             UserId = user.Id!,
         };
-        
+
         await applicationDbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
-        
+
         await applicationDbContext.SaveChangesAsync(cancellationToken);
-        
-        logger.LogInformation("Added new user {serializedUser}", jsonSerializer.Serialize(user));
+
+        logger.LogInformation("Added new user {serializedUser}", serializationService.Serialize(user, "json"));
 
         return new SignUpCommandResponce(accessToken, refreshToken.Token, user);
     }

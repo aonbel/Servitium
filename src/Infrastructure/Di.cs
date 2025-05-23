@@ -5,6 +5,7 @@ using Infrastructure.Authorization;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Options.Authentication;
+using Infrastructure.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -83,8 +84,7 @@ public static class Di
         services.AddHostedService<RoleSeedService>();
         services.AddHostedService<UserSeedService>();
 
-        services.AddScoped<JsonSerializer>();
-        services.AddScoped<TomlSerializer>();
+        services.AddScoped<SerializationService>();
 
         return services;
     }

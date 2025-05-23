@@ -1,10 +1,10 @@
-using System.Xml.Serialization;
 using Application;
 using Application.Features.Users.Commands;
-using Domain.Entities.People;
 using Infrastructure;
+using Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Servitium;
 using Servitium.Infrastructure;
 using Serilog;
@@ -23,6 +23,12 @@ builder.Services
     .AddRazorPages();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();   
+    dbContext.Database.Migrate();
+}
 
 app.MapEndpoints();
 
