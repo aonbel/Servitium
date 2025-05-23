@@ -1,0 +1,5 @@
+using Domain.Entities.Services;
+
+namespace Application.Features.HealthСertificatates.Responses;
+
+public record GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse(HealthCertificate? HealthCertificate);

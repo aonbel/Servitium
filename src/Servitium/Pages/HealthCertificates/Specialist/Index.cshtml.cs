@@ -49,7 +49,13 @@ public class Index(ISender sender) : PageModel
                 return RedirectToPage(Routes.AppointmentSpecialistIndex);
             }
             
-            var healthCertificate = getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse.Value;
+            var healthCertificate = getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse.Value.HealthCertificate;
+
+            if (healthCertificate is null)
+            {
+                ModelState.AddModelError("", "No health certificate was found");
+                return RedirectToPage(Routes.AppointmentSpecialistIndex);
+            }
             
             var getHealthCertificateTemplateByIdQuery =
                 new GetHealthCertificateTemplateByIdQuery(healthCertificateTemplateId);

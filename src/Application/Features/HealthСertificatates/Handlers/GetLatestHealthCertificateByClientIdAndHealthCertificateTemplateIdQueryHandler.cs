@@ -1,19 +1,18 @@
 using Application.Features.HealthСertificatates.Queries;
+using Application.Features.HealthСertificatates.Responses;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
-using Domain.Entities.Services;
 using Domain.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.HealthСertificatates.Handlers;
 
 public sealed class GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryHandler(
     IApplicationDbContext applicationDbContext)
     : IRequestHandler<GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery,
-        Result<HealthCertificate>>
+        Result<GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse>>
 {
-    public async Task<Result<HealthCertificate>> Handle(
+    public async Task<Result<GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse>> Handle(
         GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery request,
         CancellationToken cancellationToken)
     {
@@ -24,18 +23,21 @@ public sealed class GetLatestHealthCertificateByClientIdAndHealthCertificateTemp
             return ClientErrors.NotFoundById(request.ClientId);
         }
 
-        var healthCertificate = await applicationDbContext.HealthCertificates
-            .Where(c => c.ClientId == request.ClientId && c.TemplateId == request.HealthCertificateTemplateId)
-            .OrderByDescending(c => c.ReceivingTime)
-            .FirstOrDefaultAsync(cancellationToken);
+        var template =
+            await applicationDbContext.HealthCertificateTemplates.FindAsync(
+                [request.HealthCertificateTemplateId],
+                cancellationToken);
 
-        if (healthCertificate is null)
+        if (template is null)
         {
-            return HealthCertificateErrors.NotFoundByTemplateIdAmongHealthCertificatesOfClient(
-                request.ClientId,
-                request.HealthCertificateTemplateId);
+            return HealthCertificateTemplateErrors.NotFoundById(request.HealthCertificateTemplateId);
         }
 
-        return healthCertificate;
+        var healthCertificate = applicationDbContext.HealthCertificates
+            .Where(c => c.ClientId == request.ClientId && c.TemplateId == request.HealthCertificateTemplateId)
+            .OrderByDescending(c => c.ReceivingTime)
+            .FirstOrDefault();
+
+        return new GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse(healthCertificate);
     }
 }

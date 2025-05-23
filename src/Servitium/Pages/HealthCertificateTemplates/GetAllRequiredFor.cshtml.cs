@@ -152,6 +152,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                         new GetLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery(
                             client.Id ?? 0,
                             requirement.Id);
+
                     var getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse =
                         await sender.Send(getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQuery);
 
@@ -163,7 +164,13 @@ public class GetAllRequiredFor(ISender sender) : PageModel
                     }
 
                     var certificate = getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse
-                        .Value;
+                        .Value.HealthCertificate;
+
+                    if (certificate is null)
+                    {
+                        ModelState.AddModelError("", "No health certificate was found");
+                        return RedirectToPage(Routes.Index);
+                    }
 
                     var getHealthCertificateTemplateByIdQuery =
                         new GetHealthCertificateTemplateByIdQuery(certificate.TemplateId);
@@ -197,7 +204,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
         {
             return RedirectToPage(Routes.Index);
         }
-        
-        return RedirectToPage(Routes.AppointmentClientCreate, new {serviceId = SelectedServiceId});
+
+        return RedirectToPage(Routes.AppointmentClientCreate, new { serviceId = SelectedServiceId });
     }
 }
