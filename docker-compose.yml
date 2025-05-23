@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: servitium
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  servitium:
+    build:
+      context: .
+      dockerfile: src/Servitium/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=servitium;Username=admin;Password=password;
+      - Jwt__Secret=very-long-secret-key-here-at-least-256-bits
+      - Jwt__Issuer=issuer
+      - Jwt__Audience=audience
+      - Jwt__AccessTokenExpirationInMinutes=10
+      - Jwt__AccessTokenCookieExpirationInMinutes=30
+      - Jwt__RefreshTokenCookieExpirationInDays=14
+      - Jwt__RefreshTokenExpirationInDays=7
+      - Jwt__RefreshTokenSizeInBytes=32
+    ports:
+      - "5000:8080"
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
