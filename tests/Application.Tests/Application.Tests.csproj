@@ -28,8 +28,4 @@
         <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Features\Appointments\" />
-    </ItemGroup>
-
 </Project>

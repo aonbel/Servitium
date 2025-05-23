@@ -16,4 +16,9 @@
         <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="SerializationPlugin">
+        <HintPath>..\..\SerializationPlugin.Tests\bin\Debug\net9.0\SerializationPlugin.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 </Project>

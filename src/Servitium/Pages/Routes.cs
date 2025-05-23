@@ -19,6 +19,7 @@ internal static class Routes
     public const string AppointmentSpecialistDetails = "/Appointments/Specialist/Details";
     public const string AppointmentsAdminIndex = "/Appointments/Admin/Index";
     public const string AppointmentDetails = "/Appointments/Details";
+    public const string AppointmentDelete = "/Appointments/Delete";
     
     public const string ServiceProvidersIndex = "/ServiceProviders/Index";
     public const string ServiceProvidersAdminIndex = "/ServiceProviders/Admin/Index";
@@ -39,6 +40,7 @@ internal static class Routes
     public const string HealthCertificatesClientIndex = "/HealthCertificates/Client/Index";
     public const string HealthCertificateClientCreate = "/HealthCertificates/Client/Create";
     public const string HealthCertificatesSpecialistIndex = "/HealthCertificates/Specialist/Index";
+    public const string HealthCertificatesSpecialistCreate = "/HealthCertificates/Specialist/Create";
     public const string HealthCertificateDetails = "/HealthCertificates/Details";
     
     public const string ServicesAdminIndex = "/Services/Admin/Index";

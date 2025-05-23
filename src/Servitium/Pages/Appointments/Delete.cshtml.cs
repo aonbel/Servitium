@@ -1,3 +1,4 @@
+using Application.Features.Appointments.Commands;
 using Application.Features.Appointments.Queries;
 using Application.Features.ServiceProviders.Queries;
 using Application.Features.Services.Queries;
@@ -10,9 +11,9 @@ using Servitium.Extensions;
 
 namespace Servitium.Pages.Appointments;
 
-public class Details(ISender sender) : PageModel
+public class Delete(ISender sender) : PageModel
 {
-    public string? ReturnUrl { get; set; } = Routes.Index;
+    public string ReturnUrl { get; set; } = Routes.Index;
     
     public AppointmentDetails Data { get; set; } = new();
     
@@ -25,8 +26,8 @@ public class Details(ISender sender) : PageModel
         public string ServiceName { get; set; } = string.Empty;
         
         public DateOnly Date { get; set; }
-        
-        public TimeOnlySegment TimeSegment { get; set; }
+
+        public TimeOnlySegment TimeSegment { get; set; } = new();
     }
     
     public async Task<IActionResult> OnGetAsync(int id, string? returnUrl = null)
@@ -43,7 +44,7 @@ public class Details(ISender sender) : PageModel
         if (getAppointmentByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getAppointmentByIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return LocalRedirect(ReturnUrl);
         }
         
         var appointment = getAppointmentByIdQueryResponse.Value;
@@ -55,7 +56,7 @@ public class Details(ISender sender) : PageModel
         if (getSpecialistByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getSpecialistByIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return LocalRedirect(ReturnUrl);
         }
         
         var specialist = getSpecialistByIdQueryResponse.Value;
@@ -67,7 +68,7 @@ public class Details(ISender sender) : PageModel
         if (getServiceProviderByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getServiceProviderByIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return LocalRedirect(ReturnUrl);
         }
         
         var serviceProvider = getServiceProviderByIdQueryResponse.Value;
@@ -79,7 +80,7 @@ public class Details(ISender sender) : PageModel
         if (getServiceByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getServiceByIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return LocalRedirect(ReturnUrl);
         }
         
         var service = getServiceByIdQueryResponse.Value;
@@ -94,5 +95,19 @@ public class Details(ISender sender) : PageModel
         };
 
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync(int id)
+    {
+        var deleteAppointmentByIdCommand = new DeleteAppointmentByIdCommand(id);
+        
+        var deleteAppointmentByIdResponse = await sender.Send(deleteAppointmentByIdCommand);
+
+        if (deleteAppointmentByIdResponse.IsError)
+        {
+            ModelState.AddModelError(deleteAppointmentByIdResponse.Error);
+        }
+        
+        return LocalRedirect(ReturnUrl);
     }
 }

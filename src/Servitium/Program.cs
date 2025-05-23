@@ -1,5 +1,7 @@
+using System.Xml.Serialization;
 using Application;
 using Application.Features.Users.Commands;
+using Domain.Entities.People;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -8,7 +10,6 @@ using Servitium.Infrastructure;
 using Serilog;
 using Servitium.Extensions;
 using Servitium.Middleware;
-using Servitium.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 

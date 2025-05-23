@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SerializationPlugin;
+using SerializationPlugin.Serializers;
 
 namespace Infrastructure;
 
@@ -80,6 +82,9 @@ public static class Di
         
         services.AddHostedService<RoleSeedService>();
         services.AddHostedService<UserSeedService>();
+
+        services.AddScoped<JsonSerializer>();
+        services.AddScoped<TomlSerializer>();
 
         return services;
     }

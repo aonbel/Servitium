@@ -35,8 +35,8 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
 
         var healthCertificates = applicationDbContext.HealthCertificates.Where(c => c.ClientId == request.ClientId);
 
-        var appointments = await applicationDbContext.Appointments.Where(c => c.ClientId == request.ClientId)
-            .ToListAsync(cancellationToken);
+        var appointments = applicationDbContext.Appointments.Where(c => c.ClientId == request.ClientId)
+            .ToList();
 
         List<(Service Service, Appointment Appointment)> servicesFromAppointments = [];
 
@@ -57,7 +57,7 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
 
         foreach (var requiredTemplateId in service.RequiredHealthCertificateTemplateIds)
         {
-            if (await healthCertificates.AnyAsync(c => c.TemplateId == requiredTemplateId, cancellationToken))
+            if (healthCertificates.Any(c => c.TemplateId == requiredTemplateId))
             {
                 continue;
             }

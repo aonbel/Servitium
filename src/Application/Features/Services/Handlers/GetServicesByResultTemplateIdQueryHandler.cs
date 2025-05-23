@@ -13,9 +13,9 @@ public class GetServicesByResultTemplateIdQueryHandler(IApplicationDbContext app
     public async Task<Result<ICollection<Service>>> Handle(GetServicesByResultTemplateIdQuery request,
         CancellationToken cancellationToken)
     {
-        var services = await applicationDbContext.Services
+        var services = applicationDbContext.Services
             .Where(s => s.ResultHealthCertificateTemplateIds.Contains(request.ResultTemplateId))
-            .ToListAsync(cancellationToken);
+            .ToList();
 
         return services;
     }

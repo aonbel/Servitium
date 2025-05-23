@@ -14,7 +14,7 @@ public class GetClientByUserIdQueryHandler(IApplicationDbContext applicationDbCo
     public async Task<Result<Client>> Handle(GetClientByUserIdQuery request, CancellationToken cancellationToken)
     {
         var person =
-            await applicationDbContext.Persons.SingleOrDefaultAsync(p => p.UserId == request.UserId, cancellationToken);
+            applicationDbContext.Persons.SingleOrDefault(p => p.UserId == request.UserId);
 
         if (person is null)
         {
@@ -22,7 +22,7 @@ public class GetClientByUserIdQueryHandler(IApplicationDbContext applicationDbCo
         }
 
         var client =
-            await applicationDbContext.Clients.SingleOrDefaultAsync(c => c.PersonId == person.Id, cancellationToken);
+            applicationDbContext.Clients.SingleOrDefault(c => c.PersonId == person.Id);
 
         if (client is null)
         {

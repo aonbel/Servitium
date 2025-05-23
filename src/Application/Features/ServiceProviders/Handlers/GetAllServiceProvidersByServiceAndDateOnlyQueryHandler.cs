@@ -23,6 +23,7 @@ public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplication
         var serviceProvidersIdsThatCanProvideService = applicationDbContext.Specialists
             .Where(s => s.ServiceIds.Contains(request.ServiceId) && s.WorkDays.Contains(request.Date.DayOfWeek))
             .Select(s => s.ServiceProviderId)
+            .Distinct()
             .ToList();
 
         List<ServiceProvider> serviceProviders = [];

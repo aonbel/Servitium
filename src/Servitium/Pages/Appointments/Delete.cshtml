@@ -1,0 +1,33 @@
+@page "{id:int}"
+@model Servitium.Pages.Appointments.Delete
+
+<h1>Delete Appointment</h1>
+
+<h3>Are you sure you want to delete this appointment?</h3>
+
+<form method="post">
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.ServiceName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.ServiceName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.ServiceProviderName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.ServiceProviderName" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.SpecialistLocation" class="form-control" readonly/>
+        <label asp-for="@Model.Data.SpecialistLocation" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.Date" class="form-control" readonly/>
+        <label asp-for="@Model.Data.Date" class="control-label"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="@Model.Data.TimeSegment" class="form-control" readonly/>
+        <label asp-for="@Model.Data.TimeSegment" class="control-label"></label>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Delete" class="btn btn-primary"/>
+        <a asp-page="@Model.ReturnUrl" class="btn btn-secondary">Back</a>
+    </div>
+</form>

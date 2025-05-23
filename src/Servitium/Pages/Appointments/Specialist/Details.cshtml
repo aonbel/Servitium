@@ -12,20 +12,28 @@
         <label asp-for="@Model.Data.AppointmentTime" class="control-label"></label>
     </div>
     <div class="form-floating mb-3">
-        <input asp-for="@Model.Data.ServiceName" class="form-control" readonly/>
-        <label asp-for="@Model.Data.ServiceName" class="control-label"></label>
+        <input asp-for="@Model.Data.ServiceShortName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.ServiceShortName" class="control-label"></label>
     </div>
     <div class="form-floating mb-3">
-        <input asp-for="@Model.Data.ClientName" class="form-control" readonly/>
-        <label asp-for="@Model.Data.ClientName" class="control-label"></label>
+        <input asp-for="@Model.Data.ClientFullName" class="form-control" readonly/>
+        <label asp-for="@Model.Data.ClientFullName" class="control-label"></label>
     </div>
     <div class="form-group mt-3">
-        <a asp-page="@Routes.ClientSpecialistDetails" 
-           asp-route-id="@Model.ClientId" 
+        <a asp-page="@Routes.ClientSpecialistDetails"
+           asp-route-id="@Model.Data.ClientId"
            class="btn btn-secondary">Get client details</a>
         <a asp-page="@Routes.HealthCertificatesSpecialistIndex"
-           asp-route-serviceId="@Model.ServiceId"
-           asp-route-clientId="@Model.ClientId"
+           asp-route-serviceId="@Model.Data.ServiceId"
+           asp-route-clientId="@Model.Data.ClientId"
            class="btn btn-secondary">Get client health certificates</a>
+        @for (var index = 0; index < Model.Data.ResultHealthCertificateTemplateIds.Count; index++)
+        {
+            var index1 = index;
+            <a asp-page="@Routes.HealthCertificatesSpecialistCreate"
+               asp-route-healthCertificateTemplateId="@Model.Data.ResultHealthCertificateTemplateIds[index1]"
+               asp-route-clientId="@Model.Data.ClientId"
+               class="btn btn-secondary">Create health certificate @Model.Data.ResultHealthCertificateTemplateNames[index1]</a>
+        }
     </div>
 </form>

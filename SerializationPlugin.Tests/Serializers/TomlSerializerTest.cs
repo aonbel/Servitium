@@ -27,7 +27,7 @@ namespace SerializationPlugin.Tests.Serializers
         [Fact]
         public void Serialize_SimpleObject_ReturnsCorrectToml()
         {
-            // Act
+            // Arrange && Act
             var result = _serializer.Serialize(_person);
 
             // Assert
@@ -38,7 +38,7 @@ namespace SerializationPlugin.Tests.Serializers
         [Fact]
         public void Serialize_ComplexObject_ReturnsCorrectToml()
         {
-            // Act
+            // Arrange && Act
             var result = _serializer.Serialize(_complexPerson);
 
             // Assert

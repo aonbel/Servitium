@@ -1,4 +1,6 @@
 @page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Servitium.Pages
 @model Servitium.Pages.Appointments.Admin.All
 
 <h1 xmlns="http://www.w3.org/1999/html">All appointments</h1>
@@ -21,6 +23,9 @@
             <td>@appointment.SpecialistId</td>
             <td>@appointment.TimeSegment.Begin</td>
             <td>@appointment.TimeSegment.End</td>
+            <td>
+                
+            </td>
         </tr>
     }
     </tbody>

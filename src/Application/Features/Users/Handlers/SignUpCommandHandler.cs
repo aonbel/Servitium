@@ -9,7 +9,9 @@ using Infrastructure.Options.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SerializationPlugin.Serializers;
 
 namespace Application.Features.Users.Handlers;
 
@@ -18,7 +20,9 @@ public sealed class SignUpCommandHandler(
     IApplicationDbContext applicationDbContext,
     ITokenProvider tokenProvider,
     RoleManager<IdentityRole> roleManager,
-    IOptions<AuthenticationOptions> authenticationOptions)
+    IOptions<AuthenticationOptions> authenticationOptions,
+    ILogger<SignUpCommandHandler> logger,
+    JsonSerializer jsonSerializer)
     : IRequestHandler<SignUpCommand, Result<SignUpCommandResponce>>
 {
     public async Task<Result<SignUpCommandResponce>> Handle(SignUpCommand request, CancellationToken cancellationToken)
@@ -65,6 +69,8 @@ public sealed class SignUpCommandHandler(
         await applicationDbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
         
         await applicationDbContext.SaveChangesAsync(cancellationToken);
+        
+        logger.LogInformation("Added new user {serializedUser}", jsonSerializer.Serialize(user));
 
         return new SignUpCommandResponce(accessToken, refreshToken.Token, user);
     }

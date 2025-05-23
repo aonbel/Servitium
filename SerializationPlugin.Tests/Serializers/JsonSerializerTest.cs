@@ -27,7 +27,7 @@ public class JsonSerializerTest
     [Fact]
     public void Serialize_SimpleObject_ReturnsCorrectJson()
     {
-        // Act
+        // Arrange && Act
         var result = _serializer.Serialize(_person);
 
         // Assert
@@ -37,7 +37,7 @@ public class JsonSerializerTest
     [Fact]
     public void Serialize_ComplexObject_ReturnsCorrectJson()
     {
-        // Act
+        // Arrange && Act
         var result = _serializer.Serialize(_complexPerson);
 
         // Assert

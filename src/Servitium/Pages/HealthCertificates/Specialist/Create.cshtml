@@ -1,3 +1,18 @@
-@page "{serviceId:int}/{clientId:int}"
+@page "{healthCertificateTemplateId:int}/{clientId:int}"
 @model Servitium.Pages.HealthCertificates.Specialist.Create
+@{
+    ViewData["Title"] = "Health certificate creation";
+}
 
+<h1>Create health certificate @Model.Data.HealthCertificateTemplateName</h1>
+
+<form method="post" asp-antiforgery="true">
+    <div class="form-floating mb-3">
+        <input asp-for="Input.Description" class="form-control" aria-required="true"/>
+        <label asp-for="Input.Description" class="control-label"></label>
+        <span asp-validation-for="Input.Description" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Create" class="btn btn-primary"/>
+    </div>
+</form>
