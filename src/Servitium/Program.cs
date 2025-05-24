@@ -100,7 +100,7 @@ app.Use(async (context, next) =>
 
         var response = new
         {
-            StatusCode = context.Response.StatusCode,
+            context.Response.StatusCode,
             Message = "Internal Server Error.",
             Detail = ex.Message
         };

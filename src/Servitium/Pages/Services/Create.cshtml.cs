@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Application.Features.HealthCertificateTemplates.Queries;
 using Application.Features.Services.Commands;
-using Application.Features.Services.Queries;
+using Domain.Abstractions.Result;
 using Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,15 +9,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Servitium.Extensions;
+using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages.Services;
 
 [Authorize(Roles = ApplicationRoles.AdminOrManager)]
 public class Create(ISender sender) : PageModel
 {
-    public SelectList HealthCertificateTemplates { get; set; }
+    public string ReturnUrl { get; set; } = Routes.ServicesAdminIndex;
+
+    public DataModel Data { get; set; } = new();
 
     [BindProperty] public InputModel Input { get; set; } = new();
+
+    public class DataModel
+    {
+        public List<SelectListItem> HealthCertificateTemplates { get; set; } = [];
+    }
 
     public class InputModel
     {
@@ -41,31 +49,47 @@ public class Create(ISender sender) : PageModel
 
         [Required]
         [DataType(DataType.Duration)]
-        public TimeSpan Duration { get; set; }
+        [DisplayFormat(DataFormatString = @"{0:hh\:mm}", ApplyFormatInEditMode = true)]
+        [Range(typeof(TimeSpan), Constraints.MinServiceDuration, Constraints.MaxServiceDuration,
+            ErrorMessage = ErrorMessages.ServiceDuration)]
+        public TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(1);
     }
 
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
     {
-        var getAllHealthCertificateTemplates = new GetAllHealthCertificateTemplatesQuery();
-
-        var getAllHealthCertificateTemplatesResponse = await sender.Send(getAllHealthCertificateTemplates);
-
-        if (getAllHealthCertificateTemplatesResponse.IsError)
+        if (returnUrl is not null)
         {
-            ModelState.AddModelError(getAllHealthCertificateTemplatesResponse.Error);
-            return Page();
+            ReturnUrl = returnUrl;
         }
 
-        var healthCertificateTemplates = getAllHealthCertificateTemplatesResponse.Value;
+        var result = await LoadHealthCertificateTemplates();
 
-        HealthCertificateTemplates = new SelectList(healthCertificateTemplates, "Id", "Name");
-
+        if (result.IsError)
+        {
+            ModelState.AddModelError(result.Error);
+        }
+        
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
-        returnUrl ??= Routes.Index;
+        if (returnUrl is not null)
+        {
+            ReturnUrl = returnUrl;
+        }
+        
+        if (!ModelState.IsValid)
+        {
+            var result = await LoadHealthCertificateTemplates();
+
+            if (result.IsError)
+            {
+                ModelState.AddModelError(result.Error);
+            }
+            
+            return Page();
+        }
 
         var createServiceCommand = new CreateServiceCommand(
             Input.Name,
@@ -76,15 +100,36 @@ public class Create(ISender sender) : PageModel
             Input.PricePerHourForMaterials,
             Input.PricePerHourForEquipment,
             Input.Duration);
-        
+
         var createServiceResponse = await sender.Send(createServiceCommand);
 
         if (createServiceResponse.IsError)
         {
             ModelState.AddModelError(createServiceResponse.Error);
-            return Page();
         }
+
+        return LocalRedirect(ReturnUrl);
+    }
+    
+    public async Task<Result> LoadHealthCertificateTemplates()
+    {
+        var getAllHealthCertificateTemplates = new GetAllHealthCertificateTemplatesQuery();
+
+        var getAllHealthCertificateTemplatesResponse = await sender.Send(getAllHealthCertificateTemplates);
+
+        if (getAllHealthCertificateTemplatesResponse.IsError)
+        {
+            return getAllHealthCertificateTemplatesResponse;
+        }
+
+        var healthCertificateTemplates = getAllHealthCertificateTemplatesResponse.Value;
+
+        Data = new DataModel
+        {
+            HealthCertificateTemplates = healthCertificateTemplates
+                .Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList()
+        };
         
-        return LocalRedirect(returnUrl);
+        return Result.Success();
     }
 }

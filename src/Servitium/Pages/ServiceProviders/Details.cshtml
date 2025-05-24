@@ -1,4 +1,6 @@
 @page "{id:int}"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Servitium.Infrastructure.PagesConstants
 @using Servitium.Pages
 @model Servitium.Pages.ServiceProviders.Details
 
@@ -25,7 +27,7 @@
     </div>
     <div class="mb-3">
         <label asp-for="@Model.Data.WorkDays">Work days</label>
-        <select asp-for="@Model.Data.WorkDays" asp-items="Model.DaysOfWeekList" class="form-control" disabled></select>
+        <select asp-for="@Model.Data.WorkDays" asp-items="@DaysOfWeek.DaysOfWeekSelectList" class="form-control" disabled></select>
     </div>
     <div class="form-group mt-3">
         <a asp-page="@Routes.ServiceProvidersIndex" class="btn btn-secondary">Back to list</a>

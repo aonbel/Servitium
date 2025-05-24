@@ -18,13 +18,13 @@ public class SignInModel(ISender sender, TokenHandler tokenHandler) : PageModel
     public class InputModel
     {
         [Required]
-        [StringLength(Lengths.MaxUsername, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-            MinimumLength = Lengths.MinUsername)]
+        [StringLength(Constraints.MaxUsername, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+            MinimumLength = Constraints.MinUsername)]
         public string Username { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Lengths.MaxPassword, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-            MinimumLength = Lengths.MinPassword)]
+        [StringLength(Constraints.MaxPassword, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+            MinimumLength = Constraints.MinPassword)]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
     }

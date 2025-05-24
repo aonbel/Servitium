@@ -9,7 +9,12 @@ namespace Servitium.Pages.Services.Admin;
 
 public class Index(ISender sender) : PageModel
 {
-    public ICollection<Service> Data { get; set; } = [];
+    public DataModel Data { get; set; } = new();
+
+    public class DataModel
+    {
+        public List<Service> Services { get; set; } = [];
+    }
     
     public async Task<IActionResult> OnGetAsync()
     {
@@ -24,9 +29,12 @@ public class Index(ISender sender) : PageModel
             return Page();
         }
 
-        var services = getAllServicesQueryResponse.Value;
+        var services = getAllServicesQueryResponse.Value.ToList();
 
-        Data = services;
+        Data = new DataModel
+        {
+            Services = services
+        };
         
         return Page();
     }

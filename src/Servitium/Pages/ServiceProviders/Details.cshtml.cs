@@ -4,23 +4,15 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages.ServiceProviders;
 
 public class Details(ISender sender) : PageModel
 {
-    public List<SelectListItem> DaysOfWeekList { get; set; } = Enum
-        .GetValues<DayOfWeek>()
-        .Select(d => new SelectListItem
-        {
-            Text = d.ToString(),
-            Value = ((int)d).ToString()
-        })
-        .ToList();
+    public DataModel Data { get; set; } = new ();
     
-    public ServiceProviderDetails Data { get; set; } = new ();
-    
-    public class ServiceProviderDetails
+    public class DataModel
     {
         public string ShortName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
@@ -43,7 +35,7 @@ public class Details(ISender sender) : PageModel
         
         var serviceProvider = response.Value;
 
-        Data = new ServiceProviderDetails
+        Data = new DataModel
         {
             ShortName = serviceProvider.ShortName,
             FullName = serviceProvider.Name,

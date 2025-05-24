@@ -23,7 +23,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var service in Model.Data)
+    @foreach (var service in Model.Data.Services)
     {
         <tr>
             <td>@service.ShortName</td>
@@ -36,4 +36,4 @@
     </tbody>
 </table>
 
-<p>Total users: @Model.Data.Count</p>
+<p>Total users: @Model.Data.Services.Count</p>

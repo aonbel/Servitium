@@ -20,25 +20,25 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
     public class InputModel
     {
         [Required]
-        [StringLength(Lengths.MaxUsername, ErrorMessage = ErrorMessages.UserName, MinimumLength = Lengths.MinUsername)]
+        [StringLength(Constraints.MaxUsername, ErrorMessage = ErrorMessages.UserName, MinimumLength = Constraints.MinUsername)]
         [Display(Name = "User name")]
         public string Username { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Lengths.MaxFirstName, ErrorMessage = ErrorMessages.UserFirstName,
-            MinimumLength = Lengths.MinFirstName)]
+        [StringLength(Constraints.MaxFirstName, ErrorMessage = ErrorMessages.UserFirstName,
+            MinimumLength = Constraints.MinFirstName)]
         [Display(Name = "First name")]
         public string FirstName { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Lengths.MaxMiddleName, ErrorMessage = ErrorMessages.UserMiddleName,
-            MinimumLength = Lengths.MinMiddleName)]
+        [StringLength(Constraints.MaxMiddleName, ErrorMessage = ErrorMessages.UserMiddleName,
+            MinimumLength = Constraints.MinMiddleName)]
         [Display(Name = "Middle name")]
         public string MiddleName { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Lengths.MaxLastName, ErrorMessage = ErrorMessages.UserLastName,
-            MinimumLength = Lengths.MinLastName)]
+        [StringLength(Constraints.MaxLastName, ErrorMessage = ErrorMessages.UserLastName,
+            MinimumLength = Constraints.MinLastName)]
         [Display(Name = "Last name")]
         public string LastName { get; set; } = string.Empty;
 
@@ -52,7 +52,7 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
         public string Phone { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Lengths.MaxPassword, ErrorMessage = ErrorMessages.Password, MinimumLength = Lengths.MinPassword)]
+        [StringLength(Constraints.MaxPassword, ErrorMessage = ErrorMessages.Password, MinimumLength = Constraints.MinPassword)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; } = string.Empty;
