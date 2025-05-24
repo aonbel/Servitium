@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.Json;
 using Application;
 using Application.Features.Users.Commands;
 using Infrastructure;
@@ -26,7 +28,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();   
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.Migrate();
 }
 
@@ -63,11 +65,11 @@ app.Use(async (context, next) =>
     {
         var sender = context.RequestServices.GetRequiredService<ISender>();
         var tokenHandler = context.RequestServices.GetRequiredService<TokenHandler>();
-        
+
         var signInByTokenCommand = new SignInByTokenCommand(refreshToken!);
 
         var commandResult = await sender.Send(signInByTokenCommand);
-        
+
         if (commandResult.IsError)
         {
             tokenHandler.ClearTokens();
@@ -78,11 +80,33 @@ app.Use(async (context, next) =>
 
             tokenHandler.SetTokensIntoCookie(responce.AccessToken, responce.RefreshToken);
         }
-        
+
         context.Response.Redirect(context.Request.GetEncodedUrl());
     }
 
     await next();
+});
+
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next(context);
+    }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
+
+        var response = new
+        {
+            StatusCode = context.Response.StatusCode,
+            Message = "Internal Server Error.",
+            Detail = ex.Message
+        };
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+    }
 });
 
 app.UseStaticFiles();
