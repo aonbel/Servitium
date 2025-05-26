@@ -7,14 +7,17 @@ public class CanProvideServiceAt : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder builder)
     {
-        builder.MapGet("api/ServiceProviders/CanProvideService/{serviceId:int}/At/{date}", async (
+        builder.MapGet("api/ServiceProviders/CanProvideService/{serviceId:int}/At/{date}/After/{time}", async (
             int serviceId,
             DateOnly date,
+            TimeOnly time,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
+            var dateTime = new DateTime(date, time);
+            
             var getAllServiceProvidersByServiceAndDateOnlyQuery =
-                new GetAllServiceProvidersByServiceAndDateOnlyQuery(serviceId, date);
+                new GetAllServiceProvidersByServiceAndDateTimeQuery(serviceId, dateTime);
 
             var getAllServiceProvidersByServiceAndDateOnlyQueryResponse =
                 await sender.Send(getAllServiceProvidersByServiceAndDateOnlyQuery, cancellationToken);

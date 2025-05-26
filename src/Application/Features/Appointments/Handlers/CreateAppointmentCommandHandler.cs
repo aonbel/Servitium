@@ -23,8 +23,6 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext applic
             return SpecialistErrors.NotFoundById(request.SpecialistId);
         }
         
-        // TODO Optimize
-        
         var isTimeFreeFromAppointments = applicationDbContext.Appointments
             .Where(a => a.SpecialistId == request.SpecialistId)
             .AsEnumerable()

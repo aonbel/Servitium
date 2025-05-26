@@ -1,17 +1,19 @@
 using Application.Features.ServiceProviders.Queries;
 using Domain.Abstractions.Result;
 using Domain.Abstractions.Result.Errors;
+using Domain.Entities.Core;
 using Domain.Entities.Services;
 using Domain.Interfaces;
 using MediatR;
+using MongoDB.Driver.Linq;
 
 namespace Application.Features.ServiceProviders.Handlers;
 
 public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetAllServiceProvidersByServiceAndDateOnlyQuery, Result<ICollection<ServiceProvider>>>
+    : IRequestHandler<GetAllServiceProvidersByServiceAndDateTimeQuery, Result<ICollection<ServiceProvider>>>
 {
     public async Task<Result<ICollection<ServiceProvider>>> Handle(
-        GetAllServiceProvidersByServiceAndDateOnlyQuery request, CancellationToken cancellationToken)
+        GetAllServiceProvidersByServiceAndDateTimeQuery request, CancellationToken cancellationToken)
     {
         var service = await applicationDbContext.Services.FindAsync([request.ServiceId], cancellationToken);
 
@@ -20,25 +22,64 @@ public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplication
             return ServiceErrors.NotFoundById(request.ServiceId);
         }
 
-        var serviceProvidersIdsThatCanProvideService = applicationDbContext.Specialists
-            .Where(s => s.ServiceIds.Contains(request.ServiceId) && s.WorkDays.Contains(request.Date.DayOfWeek))
-            .Select(s => s.ServiceProviderId)
-            .Distinct()
+        var dateOnly = DateOnly.FromDateTime(request.DateTime);
+        var timeOnly = TimeOnly.FromDateTime(request.DateTime);
+
+        var specialistsThatCanProvideServiceAtDate = applicationDbContext.Specialists
+            .Where(s => s.ServiceIds.Contains(request.ServiceId) && s.WorkDays.Contains(dateOnly.DayOfWeek))
             .ToList();
 
         List<ServiceProvider> serviceProviders = [];
+        
+        HashSet<int> addedServiceProviderIds = [];
 
-        foreach (var serviceProviderId in serviceProvidersIdsThatCanProvideService)
+        foreach (var specialist in specialistsThatCanProvideServiceAtDate)
         {
-            var serviceProvider =
-                await applicationDbContext.ServiceProviders.FindAsync([serviceProviderId], cancellationToken);
+            if (addedServiceProviderIds.Contains(specialist.ServiceProviderId))
+            {
+                continue;
+            }
+            
+            var appointments = applicationDbContext.Appointments
+                .Where(a => a.SpecialistId == specialist.Id && a.Date == dateOnly && a.TimeSegment.End > timeOnly)
+                .OrderBy(a => a.TimeSegment.Begin)
+                .ToList();
+
+            // Dummies
+
+            appointments.Insert(0, new Appointment
+            {
+                ClientId = 0,
+                ServiceId = 0,
+                SpecialistId = 0,
+                Date = new DateOnly(),
+                TimeSegment = new TimeOnlySegment(new TimeOnly(), timeOnly),
+            });
+
+            appointments.Add(new Appointment
+            {
+                ClientId = 0,
+                ServiceId = 0,
+                SpecialistId = 0,
+                Date = new DateOnly(),
+                TimeSegment = new TimeOnlySegment(specialist.WorkTime.End, new TimeOnly(23, 59, 59)),
+            });
+
+            if (!appointments.Where((t, index) =>
+                    index + 1 != appointments.Count &&
+                    appointments[index + 1].TimeSegment.Begin - t.TimeSegment.End >= service.Duration).Any()) continue;
+
+            var serviceProvider = await applicationDbContext.ServiceProviders.FindAsync(
+                [specialist.ServiceProviderId],
+                cancellationToken);
 
             if (serviceProvider is null)
             {
-                return ServiceErrors.NotFoundById(serviceProviderId);
+                return ServiceErrors.NotFoundById(specialist.ServiceProviderId);
             }
 
             serviceProviders.Add(serviceProvider);
+            addedServiceProviderIds.Add(serviceProvider.Id ?? 0);
         }
 
         return serviceProviders;

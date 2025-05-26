@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Application.Features.Specialists.Queries;
 
-public sealed record GetAllSpecialistsByServiceProviderIdAndServiceIdAndDateOnlyQuery(int ServiceProviderId, int ServiceId, DateOnly Date) : IRequest<Result<ICollection<Specialist>>>;
+public sealed record GetAllSpecialistsByServiceProviderIdAndServiceIdAndDateTimeQuery(int ServiceProviderId, int ServiceId, DateTime DateTime) : IRequest<Result<ICollection<Specialist>>>;

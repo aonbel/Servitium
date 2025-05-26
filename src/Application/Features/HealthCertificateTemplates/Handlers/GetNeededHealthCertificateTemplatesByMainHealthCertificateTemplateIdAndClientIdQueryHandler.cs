@@ -46,17 +46,17 @@ public class
             var healthCertificateTemplateId = healthCertificateTemplateIdQueue.Dequeue();
 
             var checkTemplateResult = await CheckTemplate(
-                healthCertificateTemplateId, 
-                client.Id ?? 0, 
+                healthCertificateTemplateId,
+                client.Id ?? 0,
                 cancellationToken);
 
             if (checkTemplateResult.IsError)
             {
                 return checkTemplateResult.Error;
             }
-            
+
             var requirement = checkTemplateResult.Value;
-            
+
             result.Add(requirement);
 
             var neededHealthCertificateTemplateIdsResult =
@@ -108,7 +108,7 @@ public class
         }
 
         var certificate = await applicationDbContext.HealthCertificates
-            .Where(c => c.TemplateId == healthCertificateTemplateId)
+            .Where(c => c.ClientId == clientId && c.TemplateId == healthCertificateTemplateId)
             .OrderByDescending(c => c.ReceivingTime)
             .FirstOrDefaultAsync(cancellationToken);
 

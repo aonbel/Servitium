@@ -9,19 +9,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Servitium.Extensions;
+using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages.Appointments.Client;
 
 public class Create(ISender sender) : PageModel
 {
-    public const int DaysOffset = 7;
-
-    public int ServiceId { get; set; }
-
-    public List<SelectListItem> DaysSelectList { get; set; } = [];
-
-    [BindProperty] public InputModel Input { get; set; } = new();
-
+    public class DataModel
+    {
+        public int ServiceId { get; set; }
+        
+        public string DateFrom { get; set; } = string.Empty;
+        
+        public string TimeFrom { get; set; } = string.Empty;
+        
+        public List<SelectListItem> DaysSelectList { get; set; } = [];
+    }
+    
     public class InputModel
     {
         public DateOnly SelectedDate { get; set; }
@@ -32,10 +36,14 @@ public class Create(ISender sender) : PageModel
 
         public string SelectedTimeOnlySegment { get; set; } = string.Empty;
     }
+    
+    public DataModel Data { get; set; } = new ();
+    
+    [BindProperty] public InputModel Input { get; set; } = new();
 
     public async Task<IActionResult> OnGet(int serviceId, string? returnUrl = null)
     {
-        ServiceId = serviceId;
+        Data.ServiceId = serviceId;
         
         returnUrl ??= Routes.AppointmentsClientIndex;
 
@@ -88,15 +96,19 @@ public class Create(ISender sender) : PageModel
             return LocalRedirect(returnUrl);
         }
 
-        var fromDate = result.MinDateTime!.Value;
-
-        for (var dayOffset = 0; dayOffset < DaysOffset; dayOffset++)
+        var fromDate = DateOnly.FromDateTime(result.MinDateTime!.Value);
+        var fromTime = TimeOnly.FromDateTime(result.MinDateTime!.Value);
+        
+        for (var dayOffset = 0; dayOffset < DaysOfWeek.DaysOfWeekCount; dayOffset++)
         {
             var currentDate = fromDate.AddDays(dayOffset);
 
-            DaysSelectList.Add(new SelectListItem(currentDate.ToString("MM/dd/yyyy"),
+            Data.DaysSelectList.Add(new SelectListItem(currentDate.ToString("MM/dd/yyyy"),
                 currentDate.ToString("MM/dd/yyyy")));
         }
+        
+        Data.DateFrom = fromDate.ToString("O");
+        Data.TimeFrom = fromTime.ToString("O");
 
         return Page();
     }

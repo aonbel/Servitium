@@ -9,7 +9,7 @@
 <form method="post" asp-antiforgery="true">
     <div class="form-floating mb-3">
         <select asp-for="Input.SelectedDate"
-                asp-items="Model.DaysSelectList"
+                asp-items="Model.Data.DaysSelectList"
                 class="form-control"
                 aria-required="true"
                 onchange="loadServiceProviders()">
@@ -63,9 +63,10 @@
             const serviceProviderSelect = document.getElementById('Input_SelectedServiceProviderId');
             const specialistSelect = document.getElementById('Input_SelectedSpecialistId');
             const timeSegmentSelect = document.getElementById('Input_SelectedTimeOnlySegment');
-            
 
-            const serviceId = @Model.ServiceId;
+            const serviceId = @Model.Data.ServiceId;
+            const timeFrom = "@Model.Data.TimeFrom";
+            const dateFrom = "@Model.Data.DateFrom";
 
             serviceProviderSelect.disabled = false;
             serviceProviderSelect.innerHTML = '<option value="">Select service provider</option>';
@@ -73,16 +74,29 @@
             timeSegmentSelect.disabled = true;
 
             if (selectedDate) {
-                fetch(`/api/ServiceProviders/CanProvideService/${serviceId}/At/${isoDate}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        data.value.forEach(serviceProvider => {
-                            const option = document.createElement('option');
-                            option.value = serviceProvider.id;
-                            option.text = serviceProvider.shortName;
-                            serviceProviderSelect.appendChild(option);
+                if (dateFrom === isoDate) {
+                    fetch(`/api/ServiceProviders/CanProvideService/${serviceId}/At/${isoDate}/After/${timeFrom}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.value.forEach(serviceProvider => {
+                                const option = document.createElement('option');
+                                option.value = serviceProvider.id;
+                                option.text = serviceProvider.shortName;
+                                serviceProviderSelect.appendChild(option);
+                            });
                         });
-                    });
+                } else {
+                    fetch(`/api/ServiceProviders/CanProvideService/${serviceId}/At/${isoDate}/After/00:00:00`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.value.forEach(serviceProvider => {
+                                const option = document.createElement('option');
+                                option.value = serviceProvider.id;
+                                option.text = serviceProvider.shortName;
+                                serviceProviderSelect.appendChild(option);
+                            });
+                        });
+                }
             }
         }
 
@@ -96,29 +110,50 @@
             const specialistSelect = document.getElementById('Input_SelectedSpecialistId');
             const timeSegmentSelect = document.getElementById('Input_SelectedTimeOnlySegment');
 
-            const serviceId = @Model.ServiceId;
+            const serviceId = @Model.Data.ServiceId;
+            const timeFrom = "@Model.Data.TimeFrom";
+            const dateFrom = "@Model.Data.DateFrom";
 
             specialistSelect.disabled = false;
             specialistSelect.innerHTML = '<option value="">Select specialist</option>';
             timeSegmentSelect.disabled = true;
 
             if (selectedDate) {
-                fetch(`/api/Specialists/FromServiceProvider/${selectedServiceProviderId}/CanProvideService/${serviceId}/At/${isoDate}`)
-                    .then(specialistResponse => specialistResponse.json())
-                    .then(specialistData => {
-                        specialistData.value.forEach(specialist => {
-                            fetch(`/api/Person/GetById/${specialist.personId}`)
-                                .then(personResponse => personResponse.json())
-                                .then(personData => {
-                                    const person = personData.value;
+                if (isoDate === dateFrom) {
+                    fetch(`/api/Specialists/FromServiceProvider/${selectedServiceProviderId}/CanProvideService/${serviceId}/At/${isoDate}/After/${timeFrom}`)
+                        .then(specialistResponse => specialistResponse.json())
+                        .then(specialistData => {
+                            specialistData.value.forEach(specialist => {
+                                fetch(`/api/Person/GetById/${specialist.personId}`)
+                                    .then(personResponse => personResponse.json())
+                                    .then(personData => {
+                                        const person = personData.value;
 
-                                    const option = document.createElement('option');
-                                    option.value = specialist.id;
-                                    option.text = `${person.lastName} ${person.firstName}`;
-                                    specialistSelect.appendChild(option);
-                                });
+                                        const option = document.createElement('option');
+                                        option.value = specialist.id;
+                                        option.text = `${person.lastName} ${person.firstName}`;
+                                        specialistSelect.appendChild(option);
+                                    });
+                            });
                         });
-                    });
+                } else {
+                    fetch(`/api/Specialists/FromServiceProvider/${selectedServiceProviderId}/CanProvideService/${serviceId}/At/${isoDate}/After/00:00:00`)
+                        .then(specialistResponse => specialistResponse.json())
+                        .then(specialistData => {
+                            specialistData.value.forEach(specialist => {
+                                fetch(`/api/Person/GetById/${specialist.personId}`)
+                                    .then(personResponse => personResponse.json())
+                                    .then(personData => {
+                                        const person = personData.value;
+
+                                        const option = document.createElement('option');
+                                        option.value = specialist.id;
+                                        option.text = `${person.lastName} ${person.firstName}`;
+                                        specialistSelect.appendChild(option);
+                                    });
+                            });
+                        });
+                }
             }
         }
 
@@ -131,7 +166,9 @@
 
             const timeSegmentSelect = document.getElementById('Input_SelectedTimeOnlySegment');
 
-            const serviceId = @Model.ServiceId;
+            const serviceId = @Model.Data.ServiceId;
+            const timeFrom = "@Model.Data.TimeFrom";
+            const dateFrom = "@Model.Data.DateFrom";
 
             timeSegmentSelect.disabled = false;
             timeSegmentSelect.innerHTML = '<option value="">Select time segment</option>';
@@ -141,6 +178,9 @@
                     .then(response => response.json())
                     .then(responseData => {
                         responseData.value.forEach(timeSegment => {
+                            if (dateFrom === isoDate && timeSegment.begin < timeFrom) {
+                                return;
+                            }
                             const option = document.createElement('option');
                             option.text = `${timeSegment.begin}-${timeSegment.end}`;
                             option.text = `${timeSegment.begin}-${timeSegment.end}`;
