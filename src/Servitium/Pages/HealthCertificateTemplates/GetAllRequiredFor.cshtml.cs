@@ -1,68 +1,144 @@
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices.JavaScript;
 using Application.Features.Appointments.Queries;
 using Application.Features.Clients.Queries;
 using Application.Features.HealthCertificateTemplates.Queries;
 using Application.Features.HealthCertificateTemplates.Responces;
 using Application.Features.HealthСertificatates.Queries;
-using Application.Features.Persons.Queries;
 using Application.Features.Services.Queries;
-using Domain.Entities.Services;
+using Domain.Abstractions.Result;
 using Infrastructure.Authentification;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Servitium.Extensions;
+using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages.HealthCertificateTemplates;
 
 public class GetAllRequiredFor(ISender sender) : PageModel
 {
-    [BindProperty] public int SelectedServiceId { get; set; }
+    public string ReturnUrl { get; set; } = Routes.AppointmentsClientIndex;
 
-    public List<(HealthCertificateTemplate Template, SelectList Services)> TemplatesWithCorrespondingServices
+    public class DataModel
     {
-        get;
-        set;
-    } = [];
+        public List<string> AlreadyExistedHealthCertificateTemplateNames { get; set; } = [];
+        public List<DateOnly> AlreadyExistedHealthCertificateReceivingTimes { get; set; } = [];
+        public List<int> AlreadyExistedHealthCertificateIds { get; set; } = [];
 
-    public List<(HealthCertificate Certificate, HealthCertificateTemplate Template)> CertificatesWithTheirTemplates
+        public List<string> AlreadyExistedAppointmentServiceShortNames { get; set; } = [];
+        public List<DateOnly> AlreadyExistedAppointmentDates { get; set; } = [];
+        public List<int> AlreadyExistedAppointmentIds { get; set; } = [];
+
+        public List<string> NeededHealthCertificateTemplateNames { get; set; } = [];
+        public List<SelectList> NeededHealthCertificateCorrespondingServices { get; set; } = [];
+    }
+
+    public class InputModel
     {
-        get;
-        set;
-    } = [];
+        [Required]
+        public int SelectedServiceId { get; set; }
+    }
 
-    public List<(Appointment Appointment, Service Service)> AppointmentsWithTheirServices { get; set; } = [];
+    public DataModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGetAsync(int id)
+    [BindProperty] public InputModel Input { get; set; } = new();
+
+    public async Task<IActionResult> OnGetAsync(int id, string? returnUrl = null)
+    {
+        if (returnUrl is not null)
+        {
+            ReturnUrl = returnUrl;
+        }
+
+        var loadingResult = await LoadDataAsync(id);
+
+        if (loadingResult.IsError)
+        {
+            ModelState.AddModelError(loadingResult.Error);
+            return LocalRedirect(ReturnUrl);
+        }
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync(int id, string? returnUrl = null)
+    {
+        if (returnUrl is not null)
+        {
+            ReturnUrl = returnUrl;
+        }
+        
+        var userId = User.GetUserId();
+
+        var getClientByUserIdQuery = new GetClientByUserIdQuery(userId);
+
+        var getClientByUserIdQueryResponse = await sender.Send(getClientByUserIdQuery);
+
+        if (getClientByUserIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(getClientByUserIdQueryResponse.Error);
+
+            return LocalRedirect(ReturnUrl);
+        }
+
+        var client = getClientByUserIdQueryResponse.Value;
+
+        var checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery =
+            new CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery(client.Id ?? 0,
+                Input.SelectedServiceId);
+
+        var checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse =
+            await sender.Send(checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQuery);
+
+        if (checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse
+                .Error);
+            return LocalRedirect(ReturnUrl);
+        }
+
+        var canCreate = checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.Value
+            .CanCreate;
+
+        if (!canCreate)
+        {
+            ModelState.AddModelError("", ErrorMessages.CannotCreateAppointmentBecauseOfDependencies);
+
+            var loadingResult = await LoadDataAsync(id);
+
+            if (loadingResult.IsError)
+            {
+                ModelState.AddModelError(loadingResult.Error);
+
+                return LocalRedirect(ReturnUrl);
+            }
+
+            return Page();
+        }
+
+        return RedirectToPage(Routes.AppointmentClientCreate, new { serviceId = Input.SelectedServiceId });
+    }
+
+    public async Task<Result> LoadDataAsync(int healthCertificateTemplateId)
     {
         var userId = User.GetUserId();
 
-        var getPersonByUserIdQuery = new GetPersonByUserIdQuery(userId);
+        var getClientByUserIdQuery = new GetClientByUserIdQuery(userId);
 
-        var getPersonByUserIdQueryResponse = await sender.Send(getPersonByUserIdQuery);
+        var getClientByUserIdQueryResponse = await sender.Send(getClientByUserIdQuery);
 
-        if (getPersonByUserIdQueryResponse.IsError)
+        if (getClientByUserIdQueryResponse.IsError)
         {
-            ModelState.AddModelError(getPersonByUserIdQueryResponse.Error);
-            return LocalRedirect(Routes.Index);
+            return getClientByUserIdQueryResponse.Error;
         }
 
-        var person = getPersonByUserIdQueryResponse.Value;
-
-        var getClientByPersonIdQuery = new GetClientByPersonIdQuery(person.Id ?? 0);
-
-        var getClientByPersonIdQueryResponse = await sender.Send(getClientByPersonIdQuery);
-
-        if (getClientByPersonIdQueryResponse.IsError)
-        {
-            ModelState.AddModelError(getClientByPersonIdQueryResponse.Error);
-            return RedirectToPage(Routes.Index);
-        }
-
-        var client = getClientByPersonIdQueryResponse.Value;
+        var client = getClientByUserIdQueryResponse.Value;
 
         var getNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery =
-            new GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery(id,
+            new GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery(
+                healthCertificateTemplateId,
                 client.Id ?? 0);
 
         var getNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse =
@@ -70,9 +146,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
         if (getNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse.IsError)
         {
-            ModelState.AddModelError(
-                getNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse.Error);
-            return RedirectToPage(Routes.Index);
+            return getNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse.Error;
         }
 
         var requirements =
@@ -90,8 +164,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
                     if (getAppointmentByIdQueryResponse.IsError)
                     {
-                        ModelState.AddModelError(getAppointmentByIdQueryResponse.Error);
-                        return LocalRedirect(Routes.Index);
+                        return getAppointmentByIdQueryResponse.Error;
                     }
 
                     var appointment = getAppointmentByIdQueryResponse.Value;
@@ -102,13 +175,14 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
                     if (getServiceByIdQueryResponse.IsError)
                     {
-                        ModelState.AddModelError(getServiceByIdQueryResponse.Error);
-                        return LocalRedirect(Routes.Index);
+                        return getServiceByIdQueryResponse.Error;
                     }
 
                     var service = getServiceByIdQueryResponse.Value;
 
-                    AppointmentsWithTheirServices.Add((appointment, service));
+                    Data.AlreadyExistedAppointmentServiceShortNames.Add(service.ShortName);
+                    Data.AlreadyExistedAppointmentDates.Add(appointment.Date);
+                    Data.AlreadyExistedAppointmentIds.Add(appointment.Id ?? 0);
 
                     break;
                 }
@@ -121,8 +195,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
                     if (getHealthCertificateTemplateByIdQueryResponse.IsError)
                     {
-                        ModelState.AddModelError(getHealthCertificateTemplateByIdQueryResponse.Error);
-                        return RedirectToPage(Routes.Index);
+                        return getHealthCertificateTemplateByIdQueryResponse.Error;
                     }
 
                     var template = getHealthCertificateTemplateByIdQueryResponse.Value;
@@ -134,15 +207,15 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
                     if (getServicesByResultTemplateIdQueryResponse.IsError)
                     {
-                        ModelState.AddModelError(getServicesByResultTemplateIdQueryResponse.Error);
-                        return RedirectToPage(Routes.Index);
+                        return getServicesByResultTemplateIdQueryResponse.Error;
                     }
 
                     var services = getServicesByResultTemplateIdQueryResponse.Value;
 
                     var selectList = new SelectList(services, "Id", "Name");
 
-                    TemplatesWithCorrespondingServices.Add((template, selectList));
+                    Data.NeededHealthCertificateTemplateNames.Add(template.Name);
+                    Data.NeededHealthCertificateCorrespondingServices.Add(selectList);
 
                     break;
                 }
@@ -158,9 +231,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
                     if (getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse.IsError)
                     {
-                        ModelState.AddModelError(
-                            getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse.Error);
-                        return RedirectToPage(Routes.Index);
+                        return getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse.Error;
                     }
 
                     var certificate = getLatestHealthCertificateByClientIdAndHealthCertificateTemplateIdQueryResponse
@@ -168,8 +239,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
                     if (certificate is null)
                     {
-                        ModelState.AddModelError("", "No health certificate was found");
-                        return RedirectToPage(Routes.Index);
+                        return new Error("", "No health certificate was found");
                     }
 
                     var getHealthCertificateTemplateByIdQuery =
@@ -180,31 +250,20 @@ public class GetAllRequiredFor(ISender sender) : PageModel
 
                     if (getHealthCertificateTemplateByIdQueryResponse.IsError)
                     {
-                        ModelState.AddModelError(getHealthCertificateTemplateByIdQueryResponse.Error);
-                        return RedirectToPage(Routes.Index);
+                        return getHealthCertificateTemplateByIdQueryResponse.Error;
                     }
 
                     var template = getHealthCertificateTemplateByIdQueryResponse.Value;
 
-                    CertificatesWithTheirTemplates.Add((certificate, template));
+                    Data.AlreadyExistedHealthCertificateTemplateNames.Add(template.Name);
+                    Data.AlreadyExistedHealthCertificateReceivingTimes.Add(certificate.ReceivingTime);
+                    Data.AlreadyExistedHealthCertificateIds.Add(certificate.Id ?? 0);
 
                     break;
                 }
-                default:
-                    return RedirectToPage(Routes.Index);
             }
         }
 
-        return Page();
-    }
-
-    public IActionResult OnPostAsync()
-    {
-        if (SelectedServiceId == 0)
-        {
-            return RedirectToPage(Routes.Index);
-        }
-
-        return RedirectToPage(Routes.AppointmentClientCreate, new { serviceId = SelectedServiceId });
+        return Result.Success();
     }
 }

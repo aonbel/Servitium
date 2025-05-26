@@ -67,6 +67,7 @@ public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplication
 
             if (!appointments.Where((t, index) =>
                     index + 1 != appointments.Count &&
+                    appointments[index + 1].TimeSegment.Begin > t.TimeSegment.End &&
                     appointments[index + 1].TimeSegment.Begin - t.TimeSegment.End >= service.Duration).Any()) continue;
 
             var serviceProvider = await applicationDbContext.ServiceProviders.FindAsync(

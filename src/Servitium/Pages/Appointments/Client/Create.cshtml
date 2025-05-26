@@ -6,7 +6,7 @@
 
 <h1>Appointment creation</h1>
 
-<form method="post" asp-antiforgery="true">
+<form method="post" asp-route-returnUrl="@Model.ReturnUrl" asp-antiforgery="true">
     <div class="form-floating mb-3">
         <select asp-for="Input.SelectedDate"
                 asp-items="Model.Data.DaysSelectList"
@@ -54,6 +54,7 @@
 
 @section Scripts
 {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         function loadServiceProviders() {
             const selectedDate = document.getElementById('Input_SelectedDate').value;

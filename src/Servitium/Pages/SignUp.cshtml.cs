@@ -48,6 +48,7 @@ public class SignUpModel(ISender sender, TokenHandler tokenHandler) : PageModel
         public string Email { get; set; } = string.Empty;
 
         [Required]
+        [Phone]
         [Display(Name = "Phone number")]
         public string Phone { get; set; } = string.Empty;
 

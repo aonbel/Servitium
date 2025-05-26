@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Application.Features.Appointments.Commands;
 using Application.Features.Appointments.Queries;
 using Application.Features.Clients.Queries;
@@ -15,6 +16,8 @@ namespace Servitium.Pages.Appointments.Client;
 
 public class Create(ISender sender) : PageModel
 {
+    public string ReturnUrl { get; set; } = Routes.AppointmentsClientIndex;
+    
     public class DataModel
     {
         public int ServiceId { get; set; }
@@ -28,12 +31,17 @@ public class Create(ISender sender) : PageModel
     
     public class InputModel
     {
+        [Required]
+        [Display(Name = "Service Id")]
         public DateOnly SelectedDate { get; set; }
-
+        
+        [Required]
         public int SelectedServiceProviderId { get; set; }
-
+        
+        [Required]
         public int SelectedSpecialistId { get; set; }
-
+        
+        [Required]
         public string SelectedTimeOnlySegment { get; set; } = string.Empty;
     }
     
@@ -43,9 +51,12 @@ public class Create(ISender sender) : PageModel
 
     public async Task<IActionResult> OnGet(int serviceId, string? returnUrl = null)
     {
-        Data.ServiceId = serviceId;
+        if (returnUrl is not null)
+        {
+            ReturnUrl = returnUrl;
+        }
         
-        returnUrl ??= Routes.AppointmentsClientIndex;
+        Data.ServiceId = serviceId;
 
         var userId = User.GetUserId();
 
@@ -56,7 +67,7 @@ public class Create(ISender sender) : PageModel
         if (getPersonByUserIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getPersonByUserIdQueryResponse.Error);
-            return LocalRedirect(returnUrl);
+            return LocalRedirect(ReturnUrl);
         }
 
         var person = getPersonByUserIdQueryResponse.Value;
@@ -68,7 +79,7 @@ public class Create(ISender sender) : PageModel
         if (getClientByPersonIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getClientByPersonIdQueryResponse.Error);
-            return LocalRedirect(returnUrl);
+            return LocalRedirect(ReturnUrl);
         }
 
         var client = getClientByPersonIdQueryResponse.Value;
@@ -85,7 +96,7 @@ public class Create(ISender sender) : PageModel
         {
             ModelState.AddModelError(
                 checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.Error);
-            return LocalRedirect(returnUrl);
+            return LocalRedirect(ReturnUrl);
         }
 
         var result = checkIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndServiceIdQueryResponse.Value;
@@ -93,7 +104,7 @@ public class Create(ISender sender) : PageModel
         if (!result.CanCreate)
         {
             ModelState.AddModelError("CantCreateAppointment", "Can't create appointment");
-            return LocalRedirect(returnUrl);
+            return LocalRedirect(ReturnUrl);
         }
 
         var fromDate = DateOnly.FromDateTime(result.MinDateTime!.Value);
@@ -115,7 +126,10 @@ public class Create(ISender sender) : PageModel
 
     public async Task<IActionResult> OnPostAsync(int serviceId, string? returnUrl = null)
     {
-        returnUrl ??= Url.Content(Routes.AppointmentsClientIndex);
+        if (returnUrl is not null)
+        {
+            ReturnUrl = returnUrl;
+        }
 
         var userId = User.GetUserId();
 
@@ -126,7 +140,7 @@ public class Create(ISender sender) : PageModel
         if (getPersonByUserIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getPersonByUserIdQueryResponse.Error);
-            return RedirectToPage(Routes.AppointmentsClientIndex);
+            return RedirectToPage(ReturnUrl);
         }
 
         var person = getPersonByUserIdQueryResponse.Value;
@@ -138,7 +152,7 @@ public class Create(ISender sender) : PageModel
         if (getClientByPersonIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getClientByPersonIdQueryResponse.Error);
-            return RedirectToPage(Routes.AppointmentsClientIndex);
+            return RedirectToPage(ReturnUrl);
         }
 
         var client = getClientByPersonIdQueryResponse.Value;
@@ -160,9 +174,9 @@ public class Create(ISender sender) : PageModel
         if (createAppointmentResponse.IsError)
         {
             ModelState.AddModelError(createAppointmentResponse.Error);
-            return RedirectToPage(Routes.AppointmentsClientIndex);
+            return RedirectToPage(ReturnUrl);
         }
 
-        return LocalRedirect(returnUrl);
+        return LocalRedirect(ReturnUrl);
     }
 }

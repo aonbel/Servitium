@@ -20,4 +20,11 @@ public static class ErrorMessages
     // Service
     
     public const string ServiceDuration = "The {0} must be at least {1} and at max {2}.";
+    
+    // Appointments
+
+    public const string CannotCreateAppointmentBecauseOfDependencies =
+        "Can not create an appointment because you dont have needed health certificates or appointments to receive needed health certificates yet";
+    public const string CannotCreateAppointmentBecauseOfServiceNotBeingSelected =
+        "Can not create an appointment because the service is not selected";
 }   

@@ -1,9 +1,11 @@
 @page
 @model Servitium.Pages.HealthCertificateTemplates.Create
 
-<h1>Add a new health certificate template</h1>
+<h1 xmlns="http://www.w3.org/1999/html">Add a new health certificate template</h1>
 
 <form method="post" asp-antiforgery="true">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    
     <div class="form-floating mb-3">
         <input asp-for="Input.Name" class="form-control" aria-required="true"/>
         <label asp-for="Input.Name" class="control-label"></label>
