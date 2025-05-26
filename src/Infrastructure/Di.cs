@@ -3,6 +3,7 @@ using Domain.Interfaces;
 using Infrastructure.Authentification;
 using Infrastructure.Authorization;
 using Infrastructure.Data;
+using Infrastructure.Data.MongoRepositories;
 using Infrastructure.Interfaces;
 using Infrastructure.Options.Authentication;
 using Infrastructure.Serialization;
@@ -57,30 +58,46 @@ public static class Di
 
         services.AddHttpContextAccessor();
         services.AddSingleton<ITokenProvider, TokenProvider>();
-        
+
         return services;
     }
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            var connectionString = configuration.GetConnectionString("Default")
+                                   ?? throw new InvalidOperationException(
+                                       "Connection string 'Default' not found.");
+
+            options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Servitium"));
+        });
+        
+        // TODO DELETE THAT SHIT
+        
+        services.AddSingleton<IMongoDbContext>(_ =>
+        {
+            var connectionString = configuration.GetConnectionString("MongoDb")
+                                   ?? throw new InvalidOperationException(
+                                       "Connection string 'MongoDb' not found.");
+            var databaseName = configuration["MongoDb:DatabaseName"]
                                ?? throw new InvalidOperationException(
-                                   "Connection string 'DefaultConnection' not found.");
+                                   "MongoDB database name 'MongoDb:DatabaseName' not found.");
+            return new MongoDbContext(connectionString, databaseName);
+        });
 
-        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
-            connectionString,
-            b => b.MigrationsAssembly("Servitium")));
-
+        services.AddScoped<IMongoRepository<IdentityUser>, MongoUserRepository>();
+            
         services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<ApplicationDbContext>());
-        
+
         services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddRoles<IdentityRole>();
-        
+
         services.AddScoped<RoleManager<IdentityRole>>();
         services.AddScoped<UserManager<IdentityUser>>();
-        
+
         services.AddHostedService<RoleSeedService>();
         services.AddHostedService<UserSeedService>();
 

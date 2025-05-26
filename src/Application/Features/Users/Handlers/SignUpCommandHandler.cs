@@ -22,6 +22,7 @@ public sealed class SignUpCommandHandler(
     ITokenProvider tokenProvider,
     RoleManager<IdentityRole> roleManager,
     IOptions<AuthenticationOptions> authenticationOptions,
+    IMongoRepository<IdentityUser> identityUserMongoRepository,
     ILogger<SignUpCommandHandler> logger,
     SerializationService serializationService)
     : IRequestHandler<SignUpCommand, Result<SignUpCommandResponce>>
@@ -70,8 +71,12 @@ public sealed class SignUpCommandHandler(
         await applicationDbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
 
         await applicationDbContext.SaveChangesAsync(cancellationToken);
-
+        
+        // TODO DELETE THAT SHIT
+        
         logger.LogInformation("Added new user {serializedUser}", serializationService.Serialize(user, "json"));
+        
+        await identityUserMongoRepository.InsertOneAsync(user, cancellationToken);
 
         return new SignUpCommandResponce(accessToken, refreshToken.Token, user);
     }
