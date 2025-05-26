@@ -5,9 +5,9 @@
 
 <h1 xmlns="http://www.w3.org/1999/html">Your appointments</h1>
 
-@if (Model.CurrentAppointmentId is not null)
+@if (Model.Data.CurrentAppointmentId is not null)
 {
-    <a asp-page="@Routes.AppointmentSpecialistDetails" asp-route-appointmentId="@Model.CurrentAppointmentId"
+    <a asp-page="@Routes.AppointmentSpecialistDetails" asp-route-appointmentId="@Model.Data.CurrentAppointmentId"
        class="btn btn-warning btn-sm" title="Inspect current">
         <label>Inspect current</label>
     </a>
@@ -21,11 +21,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var dataInstance in Model.Data)
+    @for (var index = 0; index < Model.Data.Appointments.Count; index++)
     {
         <tr>
-            <td>@dataInstance.service.ShortName</td>
-            <td>@dataInstance.appointment.TimeSegment</td>
+            <td>@Model.Data.Services[index].ShortName</td>
+            <td>@Model.Data.Appointments[index].TimeSegment</td>
         </tr>
     }
     </tbody>

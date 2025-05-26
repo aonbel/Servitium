@@ -87,7 +87,7 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
             .ReturnsAsync(_service);
 
         _mockDbContext.Setup(db => db.HealthCertificates)
-            .Returns(MockDbSetUtility.MockDbSet(new List<HealthCertificate> { _healthCertificate }));
+            .Returns(MockDbSetUtility.MockDbSet([ _healthCertificate ]));
 
         _mockDbContext.Setup(db => db.Appointments)
             .Returns(MockDbSetUtility.MockDbSet(new List<Appointment>()));
