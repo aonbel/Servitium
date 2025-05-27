@@ -41,12 +41,8 @@ public class Create(ISender sender, ILogger<Create> logger) : PageModel
 
         var templates = getAllHealthCertificateTemplatesQueryResponse.Value;
         
-        logger.LogInformation("Return url {returnUrl}", ReturnUrl);
-        
         foreach (var template in templates)
         {
-            logger.LogInformation("Observing template {templateId}", template.Id);
-            
             var getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQuery =
                 new GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQuery(template.Id ?? 0);
 
@@ -63,8 +59,6 @@ public class Create(ISender sender, ILogger<Create> logger) : PageModel
             var getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResult =
                 getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResponse.Value.Result;
             
-            logger.LogInformation("Add template {templateName} with result {result}", template.Name, getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResult is null);
-
             Data.HealthCertificateSelectList.Add(new SelectListItem(
                     template.Name,
                     template.Id.ToString(),

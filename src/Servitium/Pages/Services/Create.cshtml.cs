@@ -35,7 +35,7 @@ public class Create(ISender sender) : PageModel
 
         [Required] [DataType(DataType.Text)] public string Description { get; set; } = string.Empty;
 
-        [Required] public ICollection<int> RequiredHealthCertificateTemplateIds { get; set; } = [];
+        public ICollection<int> RequiredHealthCertificateTemplateIds { get; set; } = [];
 
         [Required] public ICollection<int> ResultHealthCertificateTemplateIds { get; set; } = [];
 
