@@ -63,7 +63,7 @@ public class Create(ISender sender, ILogger<Create> logger) : PageModel
             var getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResult =
                 getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResponse.Value.Result;
             
-            logger.LogInformation("Add template {templateName}", template.Name);
+            logger.LogInformation("Add template {templateName} with result {result}", template.Name, getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResult is null);
 
             Data.HealthCertificateSelectList.Add(new SelectListItem(
                     template.Name,
