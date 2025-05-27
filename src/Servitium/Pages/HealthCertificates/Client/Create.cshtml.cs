@@ -9,7 +9,7 @@ using Servitium.Extensions;
 
 namespace Servitium.Pages.HealthCertificates.Client;
 
-public class Create(ISender sender) : PageModel
+public class Create(ISender sender, ILogger<Create> logger) : PageModel
 {
     public string ReturnUrl { get; set; } = Routes.HealthCertificatesClientIndex;
 
@@ -40,9 +40,13 @@ public class Create(ISender sender) : PageModel
         }
 
         var templates = getAllHealthCertificateTemplatesQueryResponse.Value;
-
+        
+        logger.LogInformation("Return url {returnUrl}", ReturnUrl);
+        
         foreach (var template in templates)
         {
+            logger.LogInformation("Observing template {templateId}", template.Id);
+            
             var getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQuery =
                 new GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQuery(template.Id ?? 0);
 
@@ -58,6 +62,8 @@ public class Create(ISender sender) : PageModel
 
             var getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResult =
                 getNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResponse.Value.Result;
+            
+            logger.LogInformation("Add template {templateName}", template.Name);
 
             Data.HealthCertificateSelectList.Add(new SelectListItem(
                     template.Name,
