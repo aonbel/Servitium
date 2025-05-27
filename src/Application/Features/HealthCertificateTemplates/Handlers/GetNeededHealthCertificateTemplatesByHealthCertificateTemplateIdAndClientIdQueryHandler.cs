@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Features.HealthCertificateTemplates.Handlers;
 
 public class
-    GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryHandler(
+    GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQueryHandler(
         IApplicationDbContext applicationDbContext)
-    : IRequestHandler<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery,
-        Result<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse>>
+    : IRequestHandler<GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQuery,
+        Result<GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQueryResponse>>
 {
     public async Task<
-            Result<GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse>>
-        Handle(GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery request,
+            Result<GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQueryResponse>>
+        Handle(GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQuery request,
             CancellationToken cancellationToken)
     {
         var client = await applicationDbContext.Clients.FindAsync([request.ClientId], cancellationToken);
@@ -59,23 +59,26 @@ public class
 
             result.Add(requirement);
 
-            var neededHealthCertificateTemplateIdsResult =
-                await GetNeededHealthCertificateTemplatesIds(healthCertificateTemplateId, cancellationToken);
-
-            if (neededHealthCertificateTemplateIdsResult.IsError)
+            if (requirement.Type == TypeOfRequirement.HealthCertificateTemplateId)
             {
-                return neededHealthCertificateTemplateIdsResult.Error;
-            }
+                var neededHealthCertificateTemplateIdsResult =
+                    await GetNeededHealthCertificateTemplatesIds(healthCertificateTemplateId, cancellationToken);
 
-            var neededHealthCertificateTemplateIds = neededHealthCertificateTemplateIdsResult.Value;
+                if (neededHealthCertificateTemplateIdsResult.IsError)
+                {
+                    return neededHealthCertificateTemplateIdsResult.Error;
+                }
 
-            foreach (var templateId in neededHealthCertificateTemplateIds)
-            {
-                healthCertificateTemplateIdQueue.Enqueue(templateId);
+                var neededHealthCertificateTemplateIds = neededHealthCertificateTemplateIdsResult.Value;
+
+                foreach (var templateId in neededHealthCertificateTemplateIds)
+                {
+                    healthCertificateTemplateIdQueue.Enqueue(templateId);
+                }
             }
         }
 
-        return new GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse(result);
+        return new GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQueryResponse(result);
     }
 
     private async Task<Result<ICollection<int>>> GetNeededHealthCertificateTemplatesIds(int healthCertificateTemplateId,

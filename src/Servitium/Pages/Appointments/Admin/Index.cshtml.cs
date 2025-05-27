@@ -12,6 +12,11 @@ namespace Servitium.Pages.Appointments.Admin;
 public class All(ISender sender) : PageModel
 {
     public ICollection<Appointment> Appointments { get; set; } = [];
+
+    public class DataModel
+    {
+        
+    }
     
     public async Task<IActionResult> OnGetAsync()
     {

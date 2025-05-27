@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Application.Features.HealthCertificateTemplates.Queries;
 using Application.Features.HealthСertificatates.Commands;
 using Domain.Entities.Services;
@@ -18,6 +19,7 @@ public class Create(ISender sender) : PageModel
     
     public class InputModel
     {
+        [Display(Name = "Description for health certificate")]
         public string Description { get; set; } = string.Empty;
     }
 

@@ -23,12 +23,18 @@ public class Create(ISender sender) : PageModel
         [Display(Name = "Date of birth")]
         public DateOnly Birthday { get; set; }
 
-        [Required] public string Gender { get; set; } = string.Empty;
+        [Required]
+        public string Gender { get; set; } = string.Empty;
     }
 
     public async Task<IActionResult> OnPostAsync(string id, string? returnUrl = null)
     {
         returnUrl ??= Url.Content(Routes.Index);
+
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
 
         var getPersonByUserIdQuery = new GetPersonByUserIdQuery(id);
 

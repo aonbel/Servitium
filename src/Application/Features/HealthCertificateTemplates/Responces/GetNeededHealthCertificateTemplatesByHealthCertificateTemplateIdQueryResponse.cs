@@ -1,0 +1,5 @@
+using Domain.Entities.Services;
+
+namespace Application.Features.HealthCertificateTemplates.Responces;
+
+public record GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdQueryResponse(ICollection<HealthCertificateTemplate>? Result);

@@ -32,16 +32,19 @@ public class Create(ISender sender) : PageModel
     public class InputModel
     {
         [Required]
-        [Display(Name = "Service Id")]
+        [Display(Name = "Date")]
         public DateOnly SelectedDate { get; set; }
         
         [Required]
+        [Display(Name = "Service provider")]
         public int SelectedServiceProviderId { get; set; }
         
         [Required]
+        [Display(Name = "Specialist")]
         public int SelectedSpecialistId { get; set; }
         
         [Required]
+        [Display(Name = "Time")]
         public string SelectedTimeOnlySegment { get; set; } = string.Empty;
     }
     

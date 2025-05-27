@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Application.Features.Appointments.Queries;
 using Application.Features.ServiceProviders.Queries;
 using Application.Features.Services.Queries;
@@ -14,19 +15,24 @@ public class Details(ISender sender) : PageModel
 {
     public string? ReturnUrl { get; set; } = Routes.Index;
     
-    public AppointmentDetails Data { get; set; } = new();
+    public DataModel Data { get; set; } = new();
     
-    public class AppointmentDetails
+    public class DataModel
     {
+        [Display(Name = "Location of the specialist in service provider")]
         public string SpecialistLocation { get; set; } = string.Empty;
         
+        [Display(Name = "Service provider name")]
         public string ServiceProviderName { get; set; } = string.Empty;
         
+        [Display(Name = "Service name")]
         public string ServiceName { get; set; } = string.Empty;
         
+        [Display(Name = "Date of appointment")]
         public DateOnly Date { get; set; }
-        
-        public TimeOnlySegment TimeSegment { get; set; }
+
+        [Display(Name = "Time of appointment")]
+        public TimeOnlySegment TimeSegment { get; set; } = new();
     }
     
     public async Task<IActionResult> OnGetAsync(int id, string? returnUrl = null)
@@ -84,7 +90,7 @@ public class Details(ISender sender) : PageModel
         
         var service = getServiceByIdQueryResponse.Value;
 
-        Data = new AppointmentDetails
+        Data = new DataModel
         {
             SpecialistLocation = specialist.Location,
             ServiceProviderName = serviceProvider.Name,

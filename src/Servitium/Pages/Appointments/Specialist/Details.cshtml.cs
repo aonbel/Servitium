@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Application.Features.Appointments.Queries;
 using Application.Features.Clients.Queries;
 using Application.Features.HealthCertificateTemplates.Queries;
@@ -22,14 +23,18 @@ public class Details(ISender sender) : PageModel
 
     public class DataModel
     {
+        [Display(Name = "Date of appointment")]
         public DateOnly AppointmentDate { get; set; }
-
+        
+        [Display(Name = "Time of appointment")]
         public TimeOnlySegment AppointmentTime { get; set; } = new();
-
+        
+        [Display(Name = "Service short name")]
         public string ServiceShortName { get; set; } = string.Empty;
-
+        
+        [Display(Name = "Client full name")]
         public string ClientFullName { get; set; } = string.Empty;
-
+        
         public int ClientId { get; set; }
 
         public int ServiceId { get; set; }

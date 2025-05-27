@@ -9,6 +9,6 @@ public enum TypeOfRequirement
 
 public record Requirement(TypeOfRequirement Type, int Id);
 
-public record GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQueryResponse(
+public record GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQueryResponse(
     ICollection<Requirement> Requirements);
     

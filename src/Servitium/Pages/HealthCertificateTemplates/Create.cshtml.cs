@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Servitium.Extensions;
+using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages.HealthCertificateTemplates;
 
@@ -20,6 +21,7 @@ public class Create(ISender sender) : PageModel
 
         [Required]
         [DataType(DataType.Duration)]
+        [Range(typeof(TimeSpan), Constraints.MinHealthCertificateTemplateActivePeriod, Constraints.MaxHealthCertificateTemplateActivePeriod)]
         public TimeSpan ActivePeriod { get; set; } = TimeSpan.Zero;
     };
 

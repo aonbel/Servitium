@@ -137,7 +137,7 @@ public class GetAllRequiredFor(ISender sender) : PageModel
         var client = getClientByUserIdQueryResponse.Value;
 
         var getNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery =
-            new GetNeededHealthCertificateTemplatesByMainHealthCertificateTemplateIdAndClientIdQuery(
+            new GetNeededHealthCertificateTemplatesByHealthCertificateTemplateIdAndClientIdQuery(
                 healthCertificateTemplateId,
                 client.Id ?? 0);
 

@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using Application.Features.HealthCertificateTemplates.Queries;
 using Application.Features.HealthСertificatates.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Servitium.Extensions;
+using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages.HealthCertificates;
 
@@ -11,11 +13,14 @@ public class Details(ISender sender) : PageModel
 {
     public string ReturnUrl { get; set; } = Routes.Index;
     
-    public HealthCertificateDetails Data { get; set; } = new ();
+    public DataModel Data { get; set; } = new ();
 
-    public class HealthCertificateDetails
+    public class DataModel
     {
+        [Display(Name = "Health certificate template name")]
         public string TemplateName { get; set; } = string.Empty;
+        
+        [Display(Name = "Health certificate template description")]
         public string Description { get; set; } = string.Empty;
     }
     
@@ -50,7 +55,7 @@ public class Details(ISender sender) : PageModel
         
         var template = getHealthCertificateTemplateByIdQueryResponse.Value;
         
-        Data = new HealthCertificateDetails()
+        Data = new DataModel
         {
             TemplateName = template.Name,
             Description = certificate.Description

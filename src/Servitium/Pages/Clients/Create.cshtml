@@ -9,7 +9,7 @@
 
 <form method="post" asp-antiforgery="true">
     <div class="form-floating mb-3">
-        <input asp-for="Input.Birthday" class="form-control" aria-required="true"/>
+        <input asp-for="Input.Birthday" class="form-control" type="date" aria-required="true"/>
         <label asp-for="Input.Birthday" class="control-label"></label>
         <span asp-validation-for="Input.Birthday" class="text-danger"></span>
     </div>
@@ -22,3 +22,7 @@
         <input type="submit" value="Create" class="btn btn-primary"/>
     </div>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

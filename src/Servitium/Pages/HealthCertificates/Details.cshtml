@@ -3,7 +3,7 @@
 
 <h1 xmlns="http://www.w3.org/1999/html">Health certificate details</h1>
 
-<form method="get">
+<form method="get" asp-returnUrl="@Model.ReturnUrl">
     <div class="form-floating mb-3">
         <input asp-for="@Model.Data.TemplateName" class="form-control" readonly/>
         <label asp-for="@Model.Data.TemplateName" class="control-label"></label>

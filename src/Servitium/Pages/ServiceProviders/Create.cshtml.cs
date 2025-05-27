@@ -17,19 +17,19 @@ public class Create(ISender sender) : PageModel
     public class InputModel
     {
         [Required]
-        [StringLength(Constraints.MaxServiceProviderName, ErrorMessage = ErrorMessages.ServiceProviderName,
+        [StringLength(Constraints.MaxServiceProviderName, ErrorMessage = ErrorMessages.StringLengthRequirements,
             MinimumLength = Constraints.MinServiceProviderName)]
         [Display(Name = "Service provider name")]
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Constraints.MaxServiceProviderShortName, ErrorMessage = ErrorMessages.ServiceProviderShortName,
+        [StringLength(Constraints.MaxServiceProviderShortName, ErrorMessage = ErrorMessages.StringLengthRequirements,
             MinimumLength = Constraints.MinServiceProviderShortName)]
         [Display(Name = "Service provider short name")]
         public string ShortName { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(Constraints.MaxServiceProviderAddress, ErrorMessage = ErrorMessages.ServiceProviderAddress,
+        [StringLength(Constraints.MaxServiceProviderAddress, ErrorMessage = ErrorMessages.StringLengthRequirements,
             MinimumLength = Constraints.MinServiceProviderAddress)]
         [Display(Name = "Service provider address")]
         public string Address { get; set; } = string.Empty;
