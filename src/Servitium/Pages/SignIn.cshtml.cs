@@ -31,7 +31,7 @@ public class SignInModel(ISender sender, TokenHandler tokenHandler) : PageModel
 
     public void OnGet(string? returnUrl = null)
     {
-        ReturnUrl = returnUrl ?? Url.Content("~/");
+        ReturnUrl = returnUrl ?? Routes.Index;
     }
 
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
