@@ -6,35 +6,32 @@ using Application.Features.HealthСertificatates.Queries;
 using Application.Features.Persons.Queries;
 using Application.Features.Services.Queries;
 using Domain.Entities.Core;
-using Domain.Entities.People;
 using Domain.Entities.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Servitium.Endpoints.Person;
 using Servitium.Extensions;
 
 namespace Servitium.Pages.Appointments.Specialist;
 
 public class Details(ISender sender) : PageModel
 {
-    public DataModel Data { get; set; } = new();
+    public string ReturnUrl { get; set; } = Routes.AppointmentSpecialistIndex;
 
+    public DataModel Data { get; set; } = new();
 
     public class DataModel
     {
         [Display(Name = "Date of appointment")]
         public DateOnly AppointmentDate { get; set; }
-        
+
         [Display(Name = "Time of appointment")]
         public TimeOnlySegment AppointmentTime { get; set; } = new();
-        
-        [Display(Name = "Service short name")]
-        public string ServiceShortName { get; set; } = string.Empty;
-        
-        [Display(Name = "Client full name")]
-        public string ClientFullName { get; set; } = string.Empty;
-        
+
+        [Display(Name = "Service short name")] public string ServiceShortName { get; set; } = string.Empty;
+
+        [Display(Name = "Client full name")] public string ClientFullName { get; set; } = string.Empty;
+
         public int ClientId { get; set; }
 
         public int ServiceId { get; set; }
@@ -44,8 +41,13 @@ public class Details(ISender sender) : PageModel
         public List<string> ResultHealthCertificateTemplateNames { get; set; } = [];
     }
 
-    public async Task<IActionResult> OnGetAsync(int appointmentId)
+    public async Task<IActionResult> OnGetAsync(int appointmentId, string? returnUrl = null)
     {
+        if (returnUrl is not null)
+        {
+            ReturnUrl = returnUrl;
+        }
+
         var getAppointmentByIdQuery = new GetAppointmentByIdQuery(appointmentId);
 
         var getAppointmentByIdQueryResponse = await sender.Send(getAppointmentByIdQuery);
@@ -53,7 +55,7 @@ public class Details(ISender sender) : PageModel
         if (getAppointmentByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getAppointmentByIdQueryResponse.Error);
-            return RedirectToPage(Routes.AppointmentSpecialistIndex);
+            return LocalRedirect(ReturnUrl);
         }
 
         var appointment = getAppointmentByIdQueryResponse.Value;
@@ -65,7 +67,7 @@ public class Details(ISender sender) : PageModel
         if (getServiceByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getServiceByIdQueryResponse.Error);
-            return RedirectToPage(Routes.AppointmentSpecialistIndex);
+            return LocalRedirect(ReturnUrl);
         }
 
         var service = getServiceByIdQueryResponse.Value;
@@ -77,7 +79,7 @@ public class Details(ISender sender) : PageModel
         if (getClientByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getClientByIdQueryResponse.Error);
-            return RedirectToPage(Routes.AppointmentSpecialistIndex);
+            return LocalRedirect(ReturnUrl);
         }
 
         var client = getClientByIdQueryResponse.Value;
@@ -89,15 +91,34 @@ public class Details(ISender sender) : PageModel
         if (getPersonByIdQueryResponse.IsError)
         {
             ModelState.AddModelError(getPersonByIdQueryResponse.Error);
-            return RedirectToPage(Routes.AppointmentSpecialistIndex);
+            return LocalRedirect(ReturnUrl);
         }
 
         var clientPerson = getPersonByIdQueryResponse.Value;
+
+        var getHealthCertificatesByClientIdQuery = new GetHealthCertificatesByClientIdQuery(client.Id ?? 0);
+
+        var getHealthCertificatesByClientIdQueryResponse = await sender.Send(getHealthCertificatesByClientIdQuery);
+
+        if (getHealthCertificatesByClientIdQueryResponse.IsError)
+        {
+            ModelState.AddModelError(getHealthCertificatesByClientIdQueryResponse.Error);
+            return LocalRedirect(ReturnUrl);
+        }
+
+        var clientHealthCertificates = getHealthCertificatesByClientIdQueryResponse.Value;
+
+        var clientHealthCertificateTemplateIds = clientHealthCertificates.Select(c => c.TemplateId).ToList();
 
         List<HealthCertificateTemplate> resultHealthCertificateTemplates = [];
 
         foreach (var resultHealthCertificateTemplateId in service.ResultHealthCertificateTemplateIds)
         {
+            if (clientHealthCertificateTemplateIds.Contains(resultHealthCertificateTemplateId))
+            {
+                continue;
+            }
+
             var getHealthCertificateByIdQuery =
                 new GetHealthCertificateTemplateByIdQuery(resultHealthCertificateTemplateId);
 
@@ -122,7 +143,7 @@ public class Details(ISender sender) : PageModel
             ClientFullName = $"{clientPerson.FirstName} {clientPerson.LastName}",
             ClientId = client.Id ?? 0,
             ServiceId = service.Id ?? 0,
-            ResultHealthCertificateTemplateIds = service.ResultHealthCertificateTemplateIds.ToList(),
+            ResultHealthCertificateTemplateIds = resultHealthCertificateTemplates.Select(t => t.Id ?? 0).ToList(),
             ResultHealthCertificateTemplateNames = resultHealthCertificateTemplates.Select(t => t.Name).ToList()
         };
 
