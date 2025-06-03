@@ -2,6 +2,11 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Servitium.Pages
 @model Servitium.Pages.HealthCertificates.Client.Index
+@{
+    ViewData["Title"] = "Health certificates";
+}
+
+<h1 xmlns="http://www.w3.org/1999/html">Your health certificates</h1>
 
 <a asp-page="@Routes.HealthCertificateClientCreate" class="btn btn-warning btn-sm" title="Create">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">

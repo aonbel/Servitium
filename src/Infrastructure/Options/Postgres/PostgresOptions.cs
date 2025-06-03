@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.Options;
+namespace Infrastructure.Options.Postgres;
 
 public class PostgresOptions
 {
