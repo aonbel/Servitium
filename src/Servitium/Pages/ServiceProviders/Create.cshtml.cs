@@ -39,13 +39,13 @@ public class Create(ISender sender) : PageModel
         [DataType(DataType.Time)]
         [Display(Name = "Work start time in utc")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
-        public TimeSpan WorkBeginTime { get; set; }
+        public TimeOnly WorkBeginTime { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
         [Display(Name = "Work end time in utc")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
-        public TimeSpan WorkEndTime { get; set; }
+        public TimeOnly WorkEndTime { get; set; }
 
         [Required(ErrorMessage = "Select at least one day")]
         [Display(Name = "Work days")]
@@ -57,7 +57,7 @@ public class Create(ISender sender) : PageModel
     public async Task<IActionResult> OnPostAsync()
     {
         var command = new CreateServiceProviderCommand(Input.Name, Input.ShortName, Input.Address,
-            new TimeOnlySegment(Input.WorkBeginTime, Input.WorkEndTime),
+            new TimeOnlySegment(Input.WorkBeginTime.ToTimeSpan(), Input.WorkEndTime.ToTimeSpan()),
             Input.SelectedWorkDays,
             Input.Contacts.Split(',')
         );
