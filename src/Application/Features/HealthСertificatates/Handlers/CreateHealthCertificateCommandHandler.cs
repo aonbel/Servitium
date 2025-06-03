@@ -33,7 +33,7 @@ public sealed class CreateHealthCertificateCommandHandler(IApplicationDbContext 
         var healthCertificate = new HealthCertificate
         {
             Description = request.Description,
-            ReceivingTime = DateOnly.FromDateTime(DateTime.Now),
+            ReceivingTime = DateOnly.FromDateTime(DateTime.UtcNow),
             TemplateId = request.TemplateId,
             ClientId = request.ClientId,
         };

@@ -24,11 +24,11 @@ public class GetAppointmentBySpecialistIdAndDateTimeQueryHandler(IApplicationDbC
             .Where(a => a.SpecialistId == specialist.Id);
 
         var dateOnly = DateOnly.FromDateTime(request.DateTime);
-        var timeOnly = TimeOnly.FromDateTime(request.DateTime);
+        var timeSpan = TimeOnly.FromDateTime(request.DateTime).ToTimeSpan();
 
         foreach (var appointment in appointments)
         {
-            if (appointment.Date == dateOnly && appointment.TimeSegment.Contains(timeOnly))
+            if (appointment.Date == dateOnly && appointment.TimeSegment.Contains(timeSpan))
             {
                 return new GetAppointmentBySpecialistIdAndDateTimeQueryResponse(appointment);
             }

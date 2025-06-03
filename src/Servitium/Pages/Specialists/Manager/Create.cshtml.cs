@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Servitium.Extensions;
 
 namespace Servitium.Pages.Specialists.Manager;
@@ -32,13 +31,13 @@ public class Create(ISender sender) : PageModel
 
         [Required]
         [DataType(DataType.Time)]
-        [Display(Name = "Work start time")]
+        [Display(Name = "Work start time in utc")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         public TimeOnly WorkBeginTime { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
-        [Display(Name = "Work end time")]
+        [Display(Name = "Work end time in utc")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         public TimeOnly WorkEndTime { get; set; }
 
@@ -130,7 +129,7 @@ public class Create(ISender sender) : PageModel
             specialistPerson.Id ?? 0,
             serviceProviderManager.ServiceProviderId,
             Input.PricePerHour,
-            new TimeOnlySegment(Input.WorkBeginTime, Input.WorkEndTime),
+            new TimeOnlySegment(Input.WorkBeginTime.ToTimeSpan(), Input.WorkEndTime.ToTimeSpan()),
             Input.WorkDays,
             Input.Contacts.Split(','),
             Input.Location,

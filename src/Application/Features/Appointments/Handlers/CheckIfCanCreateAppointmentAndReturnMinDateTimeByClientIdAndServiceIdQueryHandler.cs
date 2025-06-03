@@ -53,7 +53,7 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
             servicesFromAppointments.Add((serviceFromAppointment, appointment));
         }
 
-        var minDateTime = DateTime.Now;
+        var minDateTime = DateTime.UtcNow;
 
         foreach (var requiredTemplateId in service.RequiredHealthCertificateTemplateIds)
         {
@@ -70,7 +70,7 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
             if (suitableAppointments.Count != 0)
             {
                 var minDateTimeForCurrentAppointment = suitableAppointments[0].Appointment.Date
-                    .ToDateTime(suitableAppointments[0].Appointment.TimeSegment.End);
+                    .ToDateTime(TimeOnly.FromTimeSpan(suitableAppointments[0].Appointment.TimeSegment.End));
 
                 if (minDateTimeForCurrentAppointment > minDateTime)
                 {

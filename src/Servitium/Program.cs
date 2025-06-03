@@ -87,28 +87,6 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next(context);
-    }
-    catch (Exception ex)
-    {
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        context.Response.ContentType = "application/json";
-
-        var response = new
-        {
-            context.Response.StatusCode,
-            Message = "Internal Server Error.",
-            Detail = ex.Message
-        };
-
-        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
-    }
-});
-
 app.UseStaticFiles();
 
 app.MapRazorPages();

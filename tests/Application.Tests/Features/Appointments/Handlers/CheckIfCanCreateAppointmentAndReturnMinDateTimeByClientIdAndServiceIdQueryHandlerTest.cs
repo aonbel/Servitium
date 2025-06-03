@@ -60,7 +60,7 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
         ServiceId = 11,
         SpecialistId = 200,
         Date = DateOnly.FromDateTime(DateTime.Now).AddDays(10),
-        TimeSegment = new TimeOnlySegment(new TimeOnly(10, 0), new TimeOnly(11, 0))
+        TimeSegment = new TimeOnlySegment(new TimeSpan(10, 0, 0), new TimeSpan(11, 0, 0))
     };
 
     private readonly Service _serviceFromAppointment = new()
@@ -108,7 +108,7 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
         Assert.NotNull(result.Value);
         Assert.True(result.Value.CanCreate);
         Assert.NotNull(result.Value.MinDateTime);
-        Assert.True(result.Value.MinDateTime >= DateTime.Now.AddMinutes(-1)); 
+        Assert.True(result.Value.MinDateTime >= DateTime.UtcNow.AddMinutes(-1)); 
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class CheckIfCanCreateAppointmentAndReturnMinDateTimeByClientIdAndService
         Assert.NotNull(result.Value);
         Assert.True(result.Value.CanCreate);
         Assert.NotNull(result.Value.MinDateTime);
-        var expectedMinDateTime = _appointmentInFuture.Date.ToDateTime(_appointmentInFuture.TimeSegment.End);
+        var expectedMinDateTime = _appointmentInFuture.Date.ToDateTime(TimeOnly.FromTimeSpan(_appointmentInFuture.TimeSegment.End));
         Assert.Equal(expectedMinDateTime, result.Value.MinDateTime);
     }
 

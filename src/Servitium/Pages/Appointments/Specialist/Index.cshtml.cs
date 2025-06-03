@@ -75,7 +75,7 @@ public class Index(ISender sender) : PageModel
             Data.Services.Add(service);
         }
         
-        var getAppointmentBySpecialistIdAndDateTimeQuery = new GetAppointmentBySpecialistIdAndDateTimeQuery(specialist.Id ?? 0, DateTime.Now);
+        var getAppointmentBySpecialistIdAndDateTimeQuery = new GetAppointmentBySpecialistIdAndDateTimeQuery(specialist.Id ?? 0, DateTime.UtcNow);
         
         var getAppointmentBySpecialistIdAndDateTimeQueryResponse = await sender.Send(getAppointmentBySpecialistIdAndDateTimeQuery);
 

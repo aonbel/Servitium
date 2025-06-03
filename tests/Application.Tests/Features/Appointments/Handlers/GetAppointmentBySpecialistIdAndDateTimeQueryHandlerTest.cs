@@ -18,8 +18,8 @@ public class GetAppointmentBySpecialistIdAndDateTimeQueryHandlerTest
     private readonly DateOnly _appointmentDate = new DateOnly(2020, 1, 1);
 
     private readonly TimeOnlySegment _appointmentTimeOnlySegment = new TimeOnlySegment(
-        new TimeOnly(4, 0),
-        new TimeOnly(4, 30)
+        new TimeSpan(4, 0, 0),
+        new TimeSpan(4, 30, 0)
     );
 
     private readonly DateTime _dateTimeInAppointment = new DateTime(2020, 1, 1, 4, 20, 00);

@@ -23,7 +23,7 @@ public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplication
         }
 
         var dateOnly = DateOnly.FromDateTime(request.DateTime);
-        var timeOnly = TimeOnly.FromDateTime(request.DateTime);
+        var timeSpan = TimeOnly.FromDateTime(request.DateTime).ToTimeSpan();
 
         var specialistsThatCanProvideServiceAtDate = applicationDbContext.Specialists
             .Where(s => s.ServiceIds.Contains(request.ServiceId) && s.WorkDays.Contains(dateOnly.DayOfWeek))
@@ -41,7 +41,7 @@ public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplication
             }
             
             var appointments = applicationDbContext.Appointments
-                .Where(a => a.SpecialistId == specialist.Id && a.Date == dateOnly && a.TimeSegment.End > timeOnly)
+                .Where(a => a.SpecialistId == specialist.Id && a.Date == dateOnly && a.TimeSegment.End > timeSpan)
                 .OrderBy(a => a.TimeSegment.Begin)
                 .ToList();
 
@@ -53,7 +53,7 @@ public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplication
                 ServiceId = 0,
                 SpecialistId = 0,
                 Date = new DateOnly(),
-                TimeSegment = new TimeOnlySegment(new TimeOnly(), timeOnly),
+                TimeSegment = new TimeOnlySegment(TimeSpan.Zero, timeSpan),
             });
 
             appointments.Add(new Appointment
@@ -62,7 +62,7 @@ public class GetAllServiceProvidersByServiceAndDateOnlyQueryHandler(IApplication
                 ServiceId = 0,
                 SpecialistId = 0,
                 Date = new DateOnly(),
-                TimeSegment = new TimeOnlySegment(specialist.WorkTime.End, new TimeOnly(23, 59, 59)),
+                TimeSegment = new TimeOnlySegment(specialist.WorkTime.End, TimeSpan.FromDays(1)),
             });
 
             if (!appointments.Where((t, index) =>

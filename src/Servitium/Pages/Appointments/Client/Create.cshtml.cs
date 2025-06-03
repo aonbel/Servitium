@@ -170,7 +170,7 @@ public class Create(ISender sender) : PageModel
             client.Id ?? 0,
             Input.SelectedSpecialistId,
             Input.SelectedDate,
-            new TimeOnlySegment(timeOnlySegmentBegin, timeOnlySegmentEnd));
+            new TimeOnlySegment(timeOnlySegmentBegin.ToTimeSpan(), timeOnlySegmentEnd.ToTimeSpan()));
 
         var createAppointmentResponse = await sender.Send(createAppointmentCommand);
 

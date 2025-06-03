@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Servitium.Extensions;
 using Servitium.Infrastructure.PagesConstants;
 
 namespace Servitium.Pages.ServiceProviders;
@@ -36,15 +37,15 @@ public class Create(ISender sender) : PageModel
 
         [Required]
         [DataType(DataType.Time)]
-        [Display(Name = "Work start time")]
+        [Display(Name = "Work start time in utc")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
-        public TimeOnly WorkBeginTime { get; set; }
+        public TimeSpan WorkBeginTime { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
-        [Display(Name = "Work end time")]
+        [Display(Name = "Work end time in utc")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
-        public TimeOnly WorkEndTime { get; set; }
+        public TimeSpan WorkEndTime { get; set; }
 
         [Required(ErrorMessage = "Select at least one day")]
         [Display(Name = "Work days")]

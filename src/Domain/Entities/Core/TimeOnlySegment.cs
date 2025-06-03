@@ -2,20 +2,20 @@ namespace Domain.Entities.Core;
 
 public sealed class TimeOnlySegment
 {
-    public TimeOnly Begin { get; init; }
-    public TimeOnly End { get; init; }
+    public TimeSpan Begin { get; init; }
+    public TimeSpan End { get; init; }
 
     public TimeOnlySegment()
     {
     }
 
-    public TimeOnlySegment(TimeOnly begin, TimeOnly end)
+    public TimeOnlySegment(TimeSpan begin, TimeSpan end)
     {
         if (begin > end)
         {
-            throw new ArgumentException("The begin time cannot be greater than the end time.");
+            end += TimeSpan.FromDays(1);
         }
-
+        
         Begin = begin;
         End = end;
     }
@@ -30,13 +30,20 @@ public sealed class TimeOnlySegment
         return Begin <= other.Begin && other.End <= End;
     }
 
-    public bool Contains(TimeOnly time)
+    public bool Contains(TimeSpan time)
     {
         return time >= Begin && time <= End;
     }
 
     public override string ToString()
     {
-        return Begin + "-" + End;
+        var formattedEnd = End;
+
+        if (formattedEnd > TimeSpan.FromDays(1))
+        {
+            formattedEnd -= TimeSpan.FromDays(1);
+        }
+        
+        return Begin + "-" + formattedEnd;
     }
 }

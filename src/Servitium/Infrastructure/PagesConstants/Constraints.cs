@@ -26,8 +26,8 @@ public static class Constraints
     
     // Service
     
-    public const string MinServiceDuration = "00:01";
-    public const string MaxServiceDuration = "23:59"; 
+    public const string MinServiceDuration = "00:01:00";
+    public const string MaxServiceDuration = "23:59:00"; 
     
     // HealthCertificateTemplate
     

@@ -46,7 +46,7 @@ public class GetAllFreeAppointmentsTimeOnlySegmentsBySpecialistIdAndServiceIdAnd
         foreach (var appointment in appointments)
         {
             var freeSegments = GetAllFreeTimeSegmentsBetween(
-                currentBeginOfTimeSegment, 
+                currentBeginOfTimeSegment,
                 appointment.TimeSegment.Begin,
                 service.Duration);
             
@@ -68,21 +68,17 @@ public class GetAllFreeAppointmentsTimeOnlySegmentsBySpecialistIdAndServiceIdAnd
     }
 
     private ICollection<TimeOnlySegment> GetAllFreeTimeSegmentsBetween(
-        TimeOnly start,
-        TimeOnly end,
+        TimeSpan start,
+        TimeSpan end,
         TimeSpan serviceDuration)
     {
         List<TimeOnlySegment> result = [];
 
-        var timeSegmentEndInSpan = end.ToTimeSpan();
-
-        for (var newFreeTimeOnlySegmentBegin = start.ToTimeSpan();
-             newFreeTimeOnlySegmentBegin + serviceDuration < timeSegmentEndInSpan;
-             newFreeTimeOnlySegmentBegin += serviceDuration)
+        for (;
+             start + serviceDuration < end;
+             start += serviceDuration)
         {
-            result.Add(new TimeOnlySegment(
-                TimeOnly.FromTimeSpan(newFreeTimeOnlySegmentBegin),
-                TimeOnly.FromTimeSpan(newFreeTimeOnlySegmentBegin + serviceDuration)));
+            result.Add(new TimeOnlySegment(start, start + serviceDuration));
         }
 
         return result;

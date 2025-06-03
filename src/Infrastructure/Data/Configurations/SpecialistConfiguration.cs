@@ -11,16 +11,10 @@ public class SpecialistConfiguration : IEntityTypeConfiguration<Specialist>
         builder.OwnsOne(s => s.WorkTime, nb =>
         {
             nb.Property(p => p.Begin)
-                .HasColumnType("time")
-                .HasConversion(
-                    v => v.ToTimeSpan(),
-                    v => TimeOnly.FromTimeSpan(v));
-            
+                .HasColumnType("time");
+
             nb.Property(p => p.End)
-                .HasColumnType("time")
-                .HasConversion(
-                    v => v.ToTimeSpan(),
-                    v => TimeOnly.FromTimeSpan(v));
+                .HasColumnType("time");
         });
     }
 }

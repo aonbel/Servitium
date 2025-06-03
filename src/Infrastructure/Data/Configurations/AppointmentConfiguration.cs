@@ -11,16 +11,10 @@ public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
         builder.OwnsOne(a => a.TimeSegment, nb =>
         {
             nb.Property(p => p.Begin)
-                .HasColumnType("time")
-                .HasConversion(
-                    v => v.ToTimeSpan(),
-                    v => TimeOnly.FromTimeSpan(v));
-            
+                .HasColumnType("time");
+
             nb.Property(p => p.End)
-                .HasColumnType("time")
-                .HasConversion(
-                    v => v.ToTimeSpan(),
-                    v => TimeOnly.FromTimeSpan(v));
+                .HasColumnType("time");
         });
     }
 }

@@ -48,10 +48,8 @@ public class Create(ISender sender) : PageModel
         public decimal PricePerHourForEquipment { get; set; }
 
         [Required]
-        [DataType(DataType.Duration)]
-        [DisplayFormat(DataFormatString = @"{0:hh\:mm}", ApplyFormatInEditMode = true)]
-        [Range(typeof(TimeSpan), Constraints.MinServiceDuration, Constraints.MaxServiceDuration,
-            ErrorMessage = ErrorMessages.ServiceDuration)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:hh\\:mm}")]
+        [RegularExpression(@"((([0-1][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9])?)", ErrorMessage = "Time must be between 00:00 to 23:59")]
         public TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(1);
     }
 
